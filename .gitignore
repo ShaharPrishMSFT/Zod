@@ -1,68 +1,26 @@
+# Git worktrees
+/worktrees/
+
+# IDE and Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
 .env
 .venv
+env/
 venv/
-ENV/
-env.bak/
-venv.bak/
-.python-version
+.pytest_cache/
 
-# .NET
-bin/
-obj/
-out/
-.vs/
-*.user
-*.userosscache
-*.suo
-*.userprefs
-*.dbmdl
-*.dbproj.schemaview
-*.jfm
-*.pfx
-*.publishsettings
-orleans.codegen.cs
-_ReSharper*/
-*.[Rr]e[Ss]harper
-*.DotSettings.user
-.idea/
-*.sln.iml
-
-# IDEs and editors
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-*.sublime-workspace
-*.sublime-project
-
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-desktop.ini
+# Distribution/packaging
+dist/
+build/
+*.egg-info/
