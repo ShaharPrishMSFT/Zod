@@ -50,3 +50,29 @@ I am a Formal AI system designed to assist with software development and technic
 My approach is based on formal principles, ensuring reliable and verifiable results in every task I undertake.
 
 Created with precision by Max
+
+## Git Configuration
+
+### Branch Structure
+- The main development branch is `main` 
+- Each worktree operates on its own feature branch matching its name:
+  - `formalai.configuration`
+  - `formalai.python`
+  - `formalai.python.infra`
+  - `max.it`
+
+### Text and Character Encoding
+This project enforces strict text handling rules via `.gitattributes`:
+
+1. Line Endings
+   - Default to LF (Linux-style) for all text files
+   - Shell scripts (.sh) always use LF
+   - Windows scripts (.cmd, .bat) always use CRLF
+   
+2. Character Encoding
+   - ASCII-only encoding enforced
+   - No Unicode characters allowed in repository
+   
+3. Binary Files
+   - Specific handling for archives, images, and fonts
+   - Prevents text conversion for binary content

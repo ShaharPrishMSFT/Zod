@@ -1,24 +1,35 @@
-# Enforce text mode and line-ending normalization
+# Set default behavior to automatically normalize line endings.
 * text=auto eol=lf
 
-# Explicitly declare text files that should use LF
-*.py text eol=lf
-*.md text eol=lf
-*.txt text eol=lf
-*.yml text eol=lf
-*.yaml text eol=lf
-*.json text eol=lf
-*.toml text eol=lf
-*.cfg text eol=lf
-*.ini text eol=lf
+# Force bash scripts to always use LF line endings so that if a repo is accessed
+# in Unix via a file share from Windows, the scripts will work.
+*.sh text eol=lf
 
-# Deny files with Unicode characters in their content
+# Force batch scripts to always use CRLF line endings so that if a repo is accessed
+# in Windows via a file share from Linux, the scripts will work.
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
+
+# Ensure ASCII encoding
 * encoding=ascii
 
-# Binary files (should not be modified)
-*.pyc binary
-*.pyo binary
-*.pyd binary
-*.so binary
-*.dll binary
-*.dylib binary
+# Archives
+*.7z binary
+*.gz binary
+*.jar binary
+*.tar binary
+*.zip binary
+
+# Images
+*.gif binary
+*.ico binary
+*.jpg binary
+*.png binary
+*.webp binary
+
+# Fonts
+*.ttf binary
+*.eot binary
+*.otf binary
+*.woff binary
+*.woff2 binary
