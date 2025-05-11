@@ -1,27 +1,54 @@
 # Technical Specification
 
 ## Overview
-Infrastructure design for abstracting model calling operations in Python.
+Infrastructure design for a structured, Pythonic model execution abstraction.
 
 ## Core Components
 
-### Model Abstraction Layer
-- Generic interface for model interactions
-- Standardized input/output handling
-- Error handling and retry mechanisms
-- Asynchronous operation support
+### Message Types
+```python
+from dataclasses import dataclass, field
+from enum import Enum, auto
+from typing import List, Optional, Dict
 
-### Model Interface
-- Common interface for different model types
-- Model configuration management
-- Request/response standardization
-- Rate limiting and quota management
+class Role(Enum):
+    AGENT = auto()
+    CLIENT = auto()
 
-### Infrastructure Features
-- Type safety and validation
-- Logging and monitoring
-- Error reporting
-- Performance metrics
+@dataclass
+class Message:
+    role: Role
+    content: str
+    metadata: Dict = field(default_factory=dict)
+
+@dataclass
+class Conversation:
+    messages: List[Message]
+    
+    def add_message(self, role: Role, content: str) -> None:
+        self.messages.append(Message(role=role, content=content))
+```
+
+### Model Executor
+```python
+class ModelExecutor:
+    """Base class for model execution"""
+    
+    def execute(self, conversation: Conversation) -> Message:
+        """
+        Execute model with given conversation history.
+        Returns the model's response as a Message.
+        
+        Example:
+            executor = ModelExecutor()
+            convo = Conversation([
+                Message(Role.CLIENT, "Hello"),
+                Message(Role.AGENT, "Hi there")
+            ])
+            response = executor.execute(convo)
+        """
+        raise NotImplementedError
+```
 
 ## Implementation Details
 
@@ -31,22 +58,39 @@ src/
   client/
     python/
       FormalAiSdk/
-        core/       # Core abstraction layer
-        models/     # Model interfaces
-        utils/      # Utility functions
-        exceptions/ # Custom exceptions
+        core/
+          types.py      # Core data structures (Message, Conversation)
+          executor.py   # ModelExecutor base class
+        models/        # Specific model implementations
+          gpt.py      # Example concrete executor
+        exceptions.py  # Basic exceptions
 ```
 
-### Dependencies
-- Essential Python libraries
-- Model-specific requirements
-- Testing frameworks
+### Error Handling
+- Simple, descriptive exception types
+- Clear error messages
+- Basic retry logic where appropriate
 
-## Development Tracking
+```python
+class ExecutionError(Exception):
+    """Base class for execution errors"""
+    pass
+
+class ModelError(ExecutionError):
+    """Model-specific errors"""
+    pass
+
+class InvalidConversationError(ExecutionError):
+    """Invalid conversation structure"""
+    pass
+```
 
 ### Current Phase
-- Initial infrastructure setup
-- Core abstraction layer design
+- Implementation of core data structures
+- Basic executor interface
+- Error definitions
 
 ### Next Steps
-TBD based on requirements and priorities
+- Implement concrete model executor(s)
+- Add basic retry logic
+- Add simple logging
