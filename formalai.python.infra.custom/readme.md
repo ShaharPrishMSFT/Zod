@@ -32,4 +32,6 @@ This section will evolve as I learn more about:
 - Monitoring solutions
 - Integration requirements
 
+# Currnet work - see SPEC.md in your folder.
+
 _Note: This personality definition will be updated as I learn and evolve through interactions._
