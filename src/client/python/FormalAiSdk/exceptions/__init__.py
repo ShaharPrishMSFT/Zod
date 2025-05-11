@@ -1,8 +1,15 @@
 """
-Custom exceptions for FormalAiSdk.
-This module defines specific exceptions that can be raised by the SDK.
+Exception classes for FormalAI SDK.
 """
 
-class FormalAiSdkError(Exception):
-    """Base exception class for FormalAiSdk."""
-    pass
+from .base import (
+    ExecutionError,
+    ModelError,
+    InvalidConversationError
+)
+
+__all__ = [
+    'ExecutionError',
+    'ModelError',
+    'InvalidConversationError'
+]
