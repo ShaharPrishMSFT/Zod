@@ -1,0 +1,24 @@
+# Enforce text mode and line-ending normalization
+* text=auto eol=lf
+
+# Explicitly declare text files that should use LF
+*.py text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.cfg text eol=lf
+*.ini text eol=lf
+
+# Deny files with Unicode characters in their content
+* encoding=ascii
+
+# Binary files (should not be modified)
+*.pyc binary
+*.pyo binary
+*.pyd binary
+*.so binary
+*.dll binary
+*.dylib binary
