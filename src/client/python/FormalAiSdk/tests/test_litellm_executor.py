@@ -9,33 +9,40 @@ from ..exceptions import InvalidConversationError
 def test_ollama_conversation():
     """Test a basic conversation with Ollama."""
     # Initialize the executor with Ollama
-    executor = LiteLLMExecutor("ollama", "llama2")
+    executor = LiteLLMExecutor("ollama", "tinyllama")
     
     # Create a test conversation
     conversation = Conversation()
-    conversation.add_message(Role.CLIENT, "Hello, what is 2+2?")
+    # Add initial message
+    conversation = conversation.add_message(Role.CLIENT, "Hello, what is 2+2?")
     
-    # Get response
+    # Get first response (2+2)
     response = executor.execute(conversation)
+    # Verify it contains the correct answer
+    assert any(ans in response.content.lower() for ans in ["4", "four"]), \
+        f"Response should contain the answer '4'. Got: {response.content}"
     
-    # Add response to conversation
-    conversation.messages.append(response)
+    # Create new conversation with response
+    messages = list(conversation.messages) + [response]
+    conversation = Conversation(messages=messages)
     
-    # Ask a follow-up
-    conversation.add_message(Role.CLIENT, "And what is that number multiplied by 2?")
+    # Add follow-up question
+    conversation = conversation.add_message(Role.CLIENT, "What is 4 multiplied by 2?")
     
-    # Get another response
+    # Get second response (4*2)
     response = executor.execute(conversation)
+    # Verify it contains the correct answer
+    assert any(ans in response.content.lower() for ans in ["8", "eight"]), \
+        f"Response should contain the answer '8'. Got: {response.content}"
     
-    # Assertions
+    # Additional assertions
     assert isinstance(response, Message)
     assert response.role == Role.AGENT
-    assert response.content  # Should have some content
     assert isinstance(response.metadata, dict)
 
 def test_empty_conversation():
     """Test handling of empty conversations."""
-    executor = LiteLLMExecutor("ollama", "llama2")
+    executor = LiteLLMExecutor("ollama", "tinyllama")
     
     # Try to execute with empty conversation
     conversation = Conversation()
@@ -61,7 +68,7 @@ def test_openai_conversation():
         
         # Create test conversation
         conversation = Conversation()
-        conversation.add_message(
+        conversation = conversation.add_message(
             Role.CLIENT,
             "What are the key features of Python?"
         )
