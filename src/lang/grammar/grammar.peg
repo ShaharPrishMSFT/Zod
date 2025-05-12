@@ -10,7 +10,9 @@ formal_decl_stripped: "context" ID? any_expr_in_formal
 
 formal_decl_block: _NL formal_decl_stripped
 
-formal_block_stripped: "{" formal_stmt_line* _NL "}"
+comment_or_formal_stmt: (COMMENT_IN_BLOCKS | formal_stmt_line | _NL)
+
+formal_block_stripped: "{" comment_or_formal_stmt* _NL "}"
 
 formal_block: _NL formal_block_stripped
 
@@ -68,8 +70,10 @@ TEXT_CHAR: /[^\[\]{}\n]/   // any char except brackets, braces, or newline
 ##########################
 
 _NL: /(?:\r?\n)+/
-COMMENT: /#[^\n]*/
+COMMENT: /[ \t]*#[^\n]*/
+COMMENT_IN_BLOCKS: _NL COMMENT
 
 %import common.WS_INLINE
 %ignore WS_INLINE
 %ignore COMMENT
+%ignore COMMENT_IN_BLOCKS
