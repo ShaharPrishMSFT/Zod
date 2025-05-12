@@ -11,7 +11,7 @@ class Role(Enum):
     AGENT = auto()
     CLIENT = auto()
 
-@dataclass
+@dataclass(frozen=True)
 class Message:
     """
     Represents a single message in a conversation.
@@ -25,27 +25,44 @@ class Message:
     content: str
     metadata: Dict = field(default_factory=dict)
 
-@dataclass
+    def __post_init__(self):
+        # Create a deep copy of the metadata to ensure independence
+        # We need to use object.__setattr__ because the class is frozen
+        object.__setattr__(self, 'metadata', dict(self.metadata))
+
+@dataclass(frozen=True)
 class Conversation:
     """
     Represents a conversation consisting of a sequence of messages.
     
     Attributes:
-        messages: List of messages in the conversation
+        messages: List[Message] = A list of messages in the conversation. The list is immutable,
+                                but new messages can be added using add_message().
     """
     messages: List[Message] = field(default_factory=list)
     
-    def add_message(self, role: Role, content: str) -> None:
+    def __post_init__(self):
+        # Create a new list for messages to ensure independence
+        messages_copy = list(self.messages)
+        # We need to use object.__setattr__ because the class is frozen
+        object.__setattr__(self, 'messages', messages_copy)
+    
+    def add_message(self, role: Role, content: str) -> 'Conversation':
         """
-        Add a new message to the conversation.
+        Creates a new Conversation with the additional message.
         
         Args:
             role: The role of the message sender
             content: The message content
             
+        Returns:
+            A new Conversation instance with the additional message
+            
         Example:
             conversation = Conversation()
-            conversation.add_message(Role.CLIENT, "Hello")
-            conversation.add_message(Role.AGENT, "Hi there")
+            conversation = conversation.add_message(Role.CLIENT, "Hello")
+            conversation = conversation.add_message(Role.AGENT, "Hi there")
         """
-        self.messages.append(Message(role=role, content=content))
+        new_messages = list(self.messages)
+        new_messages.append(Message(role=role, content=content))
+        return Conversation(messages=new_messages)
