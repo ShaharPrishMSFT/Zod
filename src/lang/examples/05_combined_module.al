@@ -1,6 +1,7 @@
 # User session management module
 # Demonstrates various block types and nesting
-context auth.session.manager {
+context auth.session.manager
+{
     action
     --begin
     Session initialization:
@@ -9,14 +10,16 @@ context auth.session.manager {
 }
 
 # User verification function
-function auth.user.verify {
-    input userId
+function auth.user.verify
+{
+    input [userId]
     if
     --begin
     Verifying credentials:
-    {{ input [User ID: {{ userId }}] }}
+    {{ input [This is probably the worst usage for this] }}
     --end
-    then {
+    then
+    {
         action [Credentials verified]
     }
     else
@@ -27,19 +30,28 @@ function auth.user.verify {
 }
 
 # User greeting rules with nested blocks
-rule {
+rule
+{
     when
     --begin
     User authentication:
     {{ if
-    --begin
-    Checking login history:
-    {{ action [History retrieved] }}
+        --begin
+        Checking login history:
+        {{ action [History retrieved] }}
+        --end
+        then
+        {
+            action [User recognized]
+        }
+        else
+        {
+            action [New user detected]
+        }
+    }}
     --end
-    then { action [User recognized] }
-    else { action [New user detected] } }}
-    --end
-    then {
+    then
+    {
         action
         --begin
         Processing greeting:

@@ -1,0 +1,16 @@
+# calculator.peg  – four‑op arithmetic, integers only
+start: expr
+
+?expr: term
+     | expr "+" term   -> add
+     | expr "-" term   -> sub
+
+?term: factor
+     | term "*" factor -> mul
+     | term "/" factor -> div
+
+?factor: NUMBER        -> number
+       | "(" expr ")"
+
+%import common.NUMBER
+%ignore " "
