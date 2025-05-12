@@ -29,6 +29,13 @@ Each .custom folder must:
 - Be maintained and updated by the agent as it learns and evolves
 - Serve as the source of truth for the agent's behavior in that worktree
 
+### Worktree Communications
+Worktrees can exchange requests and collaborate through a structured communication system:
+- Located in the `/requests` directory at the repository root
+- Each request is a separate markdown file with a standardized format
+- Communications are documented and tracked in `/requests/readme.md`
+- Communications are only inspected when explicitly requested, not automatically
+
 ### Agent Instructions
 1. First, determine your current working directory
 2. If in a worktree:
