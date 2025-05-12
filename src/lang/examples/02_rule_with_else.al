@@ -1,18 +1,20 @@
 # Age verification rule showing natural blocks and else clause
-rule auth.verify {
+rule auth.verify
+{
     if
     --begin
     Verifying user age:
-    {{ input [Age provided: {{ userAge }}] }}
+    {{ input [Provide your age] }}
     --end
-    then {
+    then
+    {
         action [Access granted for verified user]
     }
-    else {
+    else
+    {
         action
         --begin
-        Access denied:
-        {{ action [Age verification failed] }}
+        Tell the user they must provide the age - they may not want to.
         --end
     }
 }

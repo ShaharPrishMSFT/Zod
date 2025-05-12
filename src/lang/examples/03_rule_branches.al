@@ -1,5 +1,6 @@
 # Discount calculation rule demonstrating block structures
-rule sales.pricing.discount {
+rule sales.pricing.discount
+{
     when
     --begin
     Evaluating premium status:
@@ -10,7 +11,8 @@ rule sales.pricing.discount {
     - Premium tier
     --end }}
     --end
-    then {
+    then
+    {
         action [Applying premium discount]
     }
     action
