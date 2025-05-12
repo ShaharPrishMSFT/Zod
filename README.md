@@ -16,6 +16,7 @@ This repository uses multiple worktrees for different components:
 - `worktrees/formalai.configuration/` - Configuration management
 - `worktrees/formalai.lang/` - Formal AI language implementation
 - `worktrees/zod.it/` - IT automation and tooling
+- `worktrees/formalai.generalist/` - General use cases and procedures
 
 Each worktree has its own custom folder for specific configurations and personality:
 - `./formalai.python.custom/` - Custom files and personality for Python SDK development
@@ -23,6 +24,7 @@ Each worktree has its own custom folder for specific configurations and personal
 - `./formalai.configuration.custom/` - Custom files and personality for configuration
 - `./formalai.lang.custom/` - Custom files and personality for language design and implementation
 - `./zod.it.custom/` - Custom files and personality for IT automation
+- `./formalai.generalist.custom/` - Custom files and personality for general use cases
 
 ### Custom Folder Structure
 Each .custom folder must:
