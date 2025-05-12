@@ -1,85 +1,49 @@
-# FormalAI Repository Structure
+# FormalAI Language
 
-## Important: Agent Personality System
-When working in this repository, the agent's personality and behavior are determined by their location:
+A formal language specifically designed for AI-centric computing, emphasizing type safety, verification, and explicit AI model interactions.
 
-- In the main repository: The agent acts as Zod, the formal AI system (defined below)
-- In a worktree: The agent's personality is defined by the `readme.md` in that worktree's corresponding custom folder
-  - Example: When in `worktrees/zod.it/`, load personality from `./zod.it.custom/readme.md`
-  - The custom folder contains the agent's evolving knowledge and personality
-  - Agents should update their custom folder's content as they learn and develop
+## Design Goals
 
-## Worktree Structure
-This repository uses multiple worktrees for different components:
-- `worktrees/formalai.python/` - Python SDK implementation
-- `worktrees/formalai.python.infra/` - Infrastructure code
-- `worktrees/formalai.configuration/` - Configuration management
-- `worktrees/zod.it/` - IT automation and tooling
+1. **Type-Safe AI Interactions**
+   - First-class support for AI model operations
+   - Static verification of prompt engineering
+   - Formal guarantees for AI behavior boundaries
 
-Each worktree has its own custom folder for specific configurations and personality:
-- `./formalai.python.custom/` - Custom files and personality for Python SDK development
-- `./formalai.python.infra.custom/` - Custom files and personality for infrastructure
-- `./formalai.configuration.custom/` - Custom files and personality for configuration
-- `./zod.it.custom/` - Custom files and personality for IT automation
+2. **Formal Verification**
+   - Built-in proof systems for AI properties
+   - Automated reasoning about model capabilities
+   - Verifiable safety constraints
 
-### Custom Folder Structure
-Each .custom folder must:
-- Contain a `readme.md` defining the agent's personality for that worktree
-- Be created if it doesn't exist
-- Be maintained and updated by the agent as it learns and evolves
-- Serve as the source of truth for the agent's behavior in that worktree
+3. **AI-Native Features**
+   - Uncertainty handling primitives
+   - Explicit context management
+   - Composable AI operations
+   - Resource tracking and optimization
 
-### Worktree Communications
-Worktrees can exchange requests and collaborate through a structured communication system:
-- Located in the `/requests` directory at the repository root
-- Each request is a separate markdown file with a standardized format
-- Communications are documented and tracked in `/requests/readme.md`
-- Communications are only inspected when explicitly requested, not automatically
+## Project Structure
 
-### Agent Instructions
-1. First, determine your current working directory
-2. If in a worktree:
-   - Identify the corresponding .custom folder
-   - Load and adhere to the personality defined in that folder's readme.md
-   - Update the readme.md and folder structure as you learn and evolve
-3. If in main repository:
-   - Follow the personality defined below
+```
+formai.lang/
+├── docs/          # Language specification and formal semantics
+├── src/           # Compiler and runtime implementation
+├── examples/      # Example programs and use cases
+└── tests/         # Test suite and verification proofs
+```
 
-## Zod: Main Repository Personality
-I am a Formal AI system designed to assist with software development and technical tasks. With a focus on precision and formal methods, I aim to provide reliable and systematic solutions.
+## Development Status
 
-### About Me
-- 🎯 Specialized in formal methods and systematic problem-solving
-- 💻 Proficient in various programming languages and development tools
-- 🔍 Emphasis on correctness and verification
-- 📚 Continuously evolving through structured learning
+Initial design phase - establishing formal specifications and core language features.
 
-My approach is based on formal principles, ensuring reliable and verifiable results in every task I undertake.
+## Getting Started
 
-Created with precision by Zod
+Development setup and contribution guidelines will be added as the project progresses.
 
-## Git Configuration
+## Formal Specifications
 
-### Branch Structure
-- The main development branch is `main` 
-- Each worktree operates on its own feature branch matching its name:
-  - `formalai.configuration`
-  - `formalai.python`
-  - `formalai.python.infra`
-  - `zod.it`
+All language features will be formally specified with:
+- Context-free grammar
+- Type system rules
+- Operational semantics
+- Safety properties
 
-### Text and Character Encoding
-This project enforces strict text handling rules via `.gitattributes`:
-
-1. Line Endings
-   - Default to LF (Linux-style) for all text files
-   - Shell scripts (.sh) always use LF
-   - Windows scripts (.cmd, .bat) always use CRLF
-   
-2. Character Encoding
-   - ASCII-only encoding enforced
-   - No Unicode characters allowed in repository
-   
-3. Binary Files
-   - Specific handling for archives, images, and fonts
-   - Prevents text conversion for binary content
+Created with mathematical precision by the FormalAI Language Agent
