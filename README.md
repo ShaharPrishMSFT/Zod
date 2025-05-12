@@ -14,13 +14,17 @@ This repository uses multiple worktrees for different components:
 - `worktrees/formalai.python/` - Python SDK implementation
 - `worktrees/formalai.python.infra/` - Infrastructure code
 - `worktrees/formalai.configuration/` - Configuration management
+- `worktrees/formalai.lang/` - Formal AI language implementation
 - `worktrees/zod.it/` - IT automation and tooling
+- `worktrees/formalai.generalist/` - General use cases and procedures
 
 Each worktree has its own custom folder for specific configurations and personality:
 - `./formalai.python.custom/` - Custom files and personality for Python SDK development
 - `./formalai.python.infra.custom/` - Custom files and personality for infrastructure
 - `./formalai.configuration.custom/` - Custom files and personality for configuration
+- `./formalai.lang.custom/` - Custom files and personality for language design and implementation
 - `./zod.it.custom/` - Custom files and personality for IT automation
+- `./formalai.generalist.custom/` - Custom files and personality for general use cases
 
 ### Custom Folder Structure
 Each .custom folder must:
@@ -67,7 +71,12 @@ Created with precision by Zod
   - `formalai.configuration`
   - `formalai.python`
   - `formalai.python.infra`
+  - `formalai.lang`
   - `zod.it`
+
+### Merge Workflow (when asked to merge to main)
+- Use `git branch --no-merged main` to check which branches need to be merged into main
+- When merging branches to main, no sync/pull/push operations are needed unless specifically requested
 
 ### Text and Character Encoding
 This project enforces strict text handling rules via `.gitattributes`:
@@ -84,3 +93,9 @@ This project enforces strict text handling rules via `.gitattributes`:
 3. Binary Files
    - Specific handling for archives, images, and fonts
    - Prevents text conversion for binary content
+
+## Installation
+
+For detailed installation instructions, refer to our [Installation Guide](./docs/installation/readme.md). The guide covers:
+- Setting up Ollama for local LLM support
+- Installing AutoGen (AutoFac) with Ollama integration
