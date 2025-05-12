@@ -8,8 +8,9 @@ from typing import List, Dict
 
 class Role(Enum):
     """Defines possible roles in a conversation."""
-    AGENT = auto()
-    CLIENT = auto()
+    AGENT = auto()   # For assistant/AI responses
+    CLIENT = auto()  # For user messages
+    SYSTEM = auto()  # For system instructions/context
 
 @dataclass(frozen=True)
 class Message:
