@@ -1,0 +1,12 @@
+{
+    "procedures": [
+        {
+            "name": "echo",
+            "description": "A simple procedure that takes a parameter and prints it."
+        },
+        {
+            "name": "discovery",
+            "description": "A procedure that interacts with the Ollama LLM to process input text and includes the procedures.json content as context."
+        }
+    ]
+}
