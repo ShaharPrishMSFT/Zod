@@ -31,6 +31,7 @@ Each .custom folder must:
 
 ### Worktree Communications
 Worktrees can exchange requests and collaborate through a structured communication system:
+- You will only load the communication mechanism when requested.
 - Located in the `/requests` directory at the repository root
 - Each request is a separate markdown file with a standardized format
 - Communications are documented and tracked in `/requests/readme.md`

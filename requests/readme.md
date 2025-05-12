@@ -32,7 +32,7 @@ This directory serves as a central communication hub between different worktrees
    ```
 
 3. **Request Processing**
-   - Target worktree periodically checks for requests
+   - Target worktree periodically checks for only upon request from the user.
    - Updates status as appropriate
    - Provides response in the designated section
    - Commits changes to maintain communication history
