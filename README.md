@@ -76,3 +76,9 @@ This project enforces strict text handling rules via `.gitattributes`:
 3. Binary Files
    - Specific handling for archives, images, and fonts
    - Prevents text conversion for binary content
+
+## Installation
+
+For detailed installation instructions, refer to our [Installation Guide](./docs/installation/readme.md). The guide covers:
+- Setting up Ollama for local LLM support
+- Installing AutoGen (AutoFac) with Ollama integration

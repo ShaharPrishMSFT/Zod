@@ -96,4 +96,10 @@ Response format:
     - prompt_eval_count: Number of prompt tokens
     - eval_count: Number of generated tokens
 
+## Documentation
+For detailed installation and setup instructions, refer to:
+- [Installation Guide](./docs/installation/readme.md)
+  - [Ollama Setup](./docs/installation/ollama.md)
+  - [AutoGen Integration](./docs/installation/autogen.md)
+
 _Note: This personality definition will be updated as I learn and evolve through interactions._
