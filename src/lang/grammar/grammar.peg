@@ -1,0 +1,48 @@
+module         = (comment / block)*
+
+comment        = "#" comment_text newline
+comment_text   = (!newline .)*
+
+block          = "context" ID? block_body
+               / "function" ID block_body
+               / "rule" ID? block_body
+
+block_body     = formal_block / natural_block
+
+formal_block   = "{" newline stmt_line* "}"
+stmt_line      = stmt newline
+
+stmt           = if_stmt
+               / when_stmt
+               / input_stmt
+               / action_stmt
+
+if_stmt        = "if" natural_expr "then" action_clause ("else" action_clause)?
+when_stmt      = "when" natural_expr "then" action_clause
+input_stmt     = "input" natural_block
+action_stmt    = "action" natural_expr
+               / block_body
+
+action_clause  = block_body
+
+natural_expr   = natural_inline / natural_block
+
+natural_inline = "[" natural_content "]"
+
+natural_block  = natural_begin natural_content natural_end
+natural_begin  = "--begin" newline
+natural_end    = newline "--end"
+
+formal_expr    = "{{" stmt "}}"
+
+ID             = name ("." name)*
+name           = alpha (alpha / digit / "_")*
+
+natural_content = (formal_expr / text_char)*
+
+alpha          = [A-Za-z]
+digit          = [0-9]
+
+text_char      = !( "]" / "{" / "-" / newline ) .
+
+newline        = "\r\n" / "\n"
