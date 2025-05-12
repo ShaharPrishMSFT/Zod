@@ -74,6 +74,10 @@ Created with precision by Zod
   - `formalai.lang`
   - `zod.it`
 
+### Merge Workflow (when asked to merge to main)
+- Use `git branch --no-merged main` to check which branches need to be merged into main
+- When merging branches to main, no sync/pull/push operations are needed unless specifically requested
+
 ### Text and Character Encoding
 This project enforces strict text handling rules via `.gitattributes`:
 
