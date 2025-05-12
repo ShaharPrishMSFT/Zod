@@ -1,4 +1,3 @@
 """
-Test suite for FormalAiSdk.
-This module contains unit tests and integration tests for the SDK.
+Tests package for FormalAI SDK.
 """
