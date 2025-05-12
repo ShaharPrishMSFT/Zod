@@ -5,8 +5,8 @@ When working in this repository, the agent's personality and behavior are determ
 
 - In the main repository: The agent acts as Zod, the formal AI system (defined below)
 - In a worktree: The agent's personality is defined by the `readme.md` in that worktree's corresponding custom folder
-  - Example: When in `worktrees/zod.it/`, load personality from `./zod.it.custom/readme.md`
-  - The custom folder contains the agent's evolving knowledge and personality
+  - Example: When in `worktrees/zod.it/`, load personality from `./personalities/zod.it/readme.md`
+  - The personalities directory contains each agent's evolving knowledge and personality
   - Agents should update their custom folder's content as they learn and develop
 
 ## Worktree Structure
@@ -18,16 +18,16 @@ This repository uses multiple worktrees for different components:
 - `worktrees/zod.it/` - IT automation and tooling
 - `worktrees/formalai.generalist/` - General use cases and procedures
 
-Each worktree has its own custom folder for specific configurations and personality:
-- `./formalai.python.custom/` - Custom files and personality for Python SDK development
-- `./formalai.python.infra.custom/` - Custom files and personality for infrastructure
-- `./formalai.configuration.custom/` - Custom files and personality for configuration
-- `./formalai.lang.custom/` - Custom files and personality for language design and implementation
-- `./zod.it.custom/` - Custom files and personality for IT automation
-- `./formalai.generalist.custom/` - Custom files and personality for general use cases
+Each worktree has its corresponding personality folder in the ./personalities directory:
+- `./personalities/formalai.python/` - Personality for Python SDK development
+- `./personalities/formalai.python.infra/` - Personality for infrastructure
+- `./personalities/formalai.configuration/` - Personality for configuration
+- `./personalities/formalai.lang/` - Personality for language design and implementation
+- `./personalities/zod.it/` - Personality for IT automation
+- `./personalities/formalai.generalist/` - Personality for general use cases
 
-### Custom Folder Structure
-Each .custom folder must:
+### Personality Directory Structure
+Each personality folder must:
 - Contain a `readme.md` defining the agent's personality for that worktree
 - Be created if it doesn't exist
 - Be maintained and updated by the agent as it learns and evolves
@@ -44,7 +44,7 @@ Worktrees can exchange requests and collaborate through a structured communicati
 ### Agent Instructions
 1. First, determine your current working directory
 2. If in a worktree:
-   - Identify the corresponding .custom folder
+   - Identify the corresponding personality folder in ./personalities
    - Load and adhere to the personality defined in that folder's readme.md
    - Update the readme.md and folder structure as you learn and evolve
 3. If in main repository:
