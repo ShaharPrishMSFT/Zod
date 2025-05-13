@@ -1,3 +1,10 @@
+# Process: Archiving Completed Steps
+
+When a step is completed:
+1. Move its full content (including heading and details) from `playground/viewer/liveprompt.md` to the top of `playground/viewer/liveprompt.archive.md`.
+2. Mark the step as completed in the steps list, with the completion date.
+3. Commit both file changes to the current working branch.
+
 # Steps & Completion Log
 
 - [x] **Step 1: Problem Statement** — *Completed: 2025-05-13*
@@ -16,19 +23,6 @@ When a step is completed, move its full content (including heading and details) 
 > **Objective:**  
 > Design and plan a developer-friendly HTML tool that visually represents AgentLingua (`.al`) files as interactive flow diagrams, running easily and locally in the browser.
 
----
-
-## Step 1: Problem Statement
-
-**Problem Statement:**  
-AgentLingua (`.al`) source files define agent logic and structure, but are currently only accessible as code—making it difficult for developers and users to quickly grasp their flow, relationships, and logic at a glance.
-
-To address this, we will build a local, graphical flow diagram viewer that:
-- Allows developers and users to visually inspect `.al` files, seeing contexts, functions, rules, and their relationships as an interactive flow diagram.
-- Runs as a single HTML file, easily opened in any browser with no server or build step required.
-- Helps users move from code-centric to visual understanding, supporting exploration, learning, and debugging of AgentLingua programs.
-
-This tool will emphasize rapid prototyping and experimentation, with clear documentation of objectives and lessons learned as we iterate.
 ---
 
 ## Step 2: User Stories / Use Cases
