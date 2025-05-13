@@ -5,7 +5,7 @@
 ## Progress Tracker
 
 * 1. Survey existing repo layout & configs ... [[STEP-1 STATUS: DONE (2025-05-13)]]
-* 2. Build Git sandbox utility for isolated testing ... \[\[STEP-2 STATUS: PENDING]]
+* 2. Build Git sandbox utility for isolated testing ... [[STEP-2 STATUS: DONE (2025-05-13)]]
 * 3. Implement approval flows and English→CLI mapping (status only) ... \[\[STEP-3 STATUS: PENDING]]
 * 4. Write tests using sandbox util (approve / decline) ... \[\[STEP-4 STATUS: PENDING]]
 
@@ -15,6 +15,7 @@
 2. **Cut the full step body** from *Current Step Bodies* and paste it verbatim into `prompt.archive.md`, preserving the original numbering.
 3. Add a one‑line summary of the step to *COMPLETED‑STEP SUMMARIES* (above).
 4. Keep the *Technical Index* capped at 10 items by dropping the least valuable entry.
+5. **All commits must include a message starting with `Step X complete:` and a contextual description of what changed.**
 
 ---
 
@@ -31,6 +32,7 @@
 ### COMPLETED-STEP SUMMARIES
 
 1. Surveyed repo structure, key modules, tests, tooling, and quirks. (2025-05-13)
+2. Built Git sandbox utility for isolated testing and ensured .gitignore coverage. (2025-05-13)
 
 ### Technical Index (max 10 items)
 
@@ -56,15 +58,6 @@
 ---
 
 ### Current Step Bodies
-
-#### 2. Build Git sandbox utility for isolated testing
-
-* Create `tests/_util/git_sandbox.py` with helper class `GitSandbox`.
-
-  * `setup()` – creates a fresh sub‑folder (git‑ignored) and runs `git init`.
-  * `add_sample_code()` – writes dummy Python files to mimic real work.
-  * `run(cmd, approve=True/False)` – invokes `git_procedure` with simulated approval.
-* Ensure sandbox root is covered by `.gitignore`.
 
 #### 3. Implement approval flows and English→CLI mapping (status only)
 
