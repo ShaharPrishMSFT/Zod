@@ -2,18 +2,22 @@
 
 <!--- COMPLETED-STEP SUMMARIES (append most salient take-aways, pitfalls, key decisions) --->
 
-<!-- Example: 1 Installed Rust 1.78 + cargo-binutils; remember to pass `--target x86_64-pc-windows-msvc` when cross-compiling. -->
-
-<!--- (Old step bodies are copied verbatim to `prompt.archive.md` by the agent) --->
+- Editor must support real-time parsing and inline error feedback for `.al` files.
+- Split view: code editor (left), parse output (right), collapsible log/debug area (bottom).
+- File I/O should be seamless: load/save `.al` files via UI, no cumbersome edit-save cycles.
+- Inline error markers and hover tooltips are essential for usability.
+- Responsive layout: horizontal split on large screens, tabbed panels on small screens.
 
 ---
 
 ## Progress Tracker
 
-* 1. Bootstrap environment & prerequisites ... \[\[STEP-1 STATUS: PENDING]]
-* 2. Draft minimal spec & directory layout ... \[\[STEP-2 STATUS: PENDING]]
-* 3. Implement core skeleton (happy-path only) ... \[\[STEP-3 STATUS: PENDING]]
-* 4. Wire tests + CI; prune TODOs ... \[\[STEP-4 STATUS: PENDING]]
+* 1. Reason about minimal local implementation ... [[STEP-1 STATUS: PENDING]]
+* 2. Integrate syntax-highlighting editor ... [[STEP-2 STATUS: PENDING]]
+* 3. Implement file load/save functionality ... [[STEP-3 STATUS: PENDING]]
+* 4. Integrate real-time parser and validation ... [[STEP-4 STATUS: PENDING]]
+* 5. Build output and feedback panel ... [[STEP-5 STATUS: PENDING]]
+* 6. Add logging and debug area ... [[STEP-6 STATUS: PENDING]]
 
 When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy the full step block to `prompt.archive.md`.
 
@@ -35,16 +39,16 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
 
 ### Technical Index (max 10 items)
 
-1. \[\[URI\_OR\_TITLE\_1]]
-2. \[\[URI\_OR\_TITLE\_2]]
-3. \[\[URI\_OR\_TITLE\_3]]
-4. \[\[URI\_OR\_TITLE\_4]]
-5. \[\[URI\_OR\_TITLE\_5]]
-6. \[\[URI\_OR\_TITLE\_6]]
-7. \[\[URI\_OR\_TITLE\_7]]
-8. \[\[URI\_OR\_TITLE\_8]]
-9. \[\[URI\_OR\_TITLE\_9]]
-10. \[\[URI\_OR\_TITLE\_10]]
+1. [Playground Specification](playground/playground-spec.md)
+2. [Main README](personalities/formalai.playground/readme.md)
+3. [Grammar Definition](src/lang/grammar/grammar.peg)
+4. [Minimal .al Example](src/lang/examples/00_super_simple.al)
+5. AgentLingua syntax highlighting
+6. Real-time parser integration
+7. File I/O (Open/Save)
+8. Inline error markers & tooltips
+9. AST/output panel
+10. Collapsible log/debug area
 
 ---
 
@@ -59,29 +63,42 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
 
 ### Current Step Bodies
 
-#### 1. Bootstrap environment & prerequisites
+#### 1. Reason about minimal local implementation
 
-* Install toolchain(s): Python (recent), pip.
-* Create git repo, enable pre-commit hooks.
-* Add baseline `.editorconfig`, `.gitignore`, license.
+* Analyze the playground requirements and available tools/libraries.
+* Identify the simplest way to get a working AgentLingua playground locally (e.g., static HTML with CodeMirror/Monaco, minimal/no build step, browser-based file I/O).
+* List any shortcuts, assumptions, or trade-offs to minimize setup and coding effort.
+* Document the minimal viable path and any blockers.
 
-#### 2. Draft minimal spec & directory layout
+#### 2. Integrate syntax-highlighting editor
 
-* Write BNF-style grammar (or interface spec) in `/spec/grammar.bnf`.
-* Sketch folder tree (`src/`, `tests/`, `scripts/`).
-* Record any open design questions.
+* Choose and set up a code editor component (e.g., CodeMirror or Monaco) with AgentLingua `.al` syntax highlighting.
+* Ensure support for multi-line editing, indentation, undo/redo, and find/replace.
+* Configure autocomplete/IntelliSense for AgentLingua keywords and actions.
 
-#### 3. Implement core skeleton (happy-path only)
+#### 3. Implement file load/save functionality
 
-* Generate project scaffolding manually.
-* Implement the thinnest viable path from input -> parse -> return syntax tree.
-* Stub unimplemented parts with `TODO:`.
+* Add UI controls (buttons or menu) for "Open" and "Save" actions.
+* Implement file input for loading `.al` files into the editor.
+* Enable exporting/saving the current editor content as a `.al` file or to clipboard.
 
-#### 4. Wire tests + CI; prune TODOs
+#### 4. Integrate real-time parser and validation
 
-* Add unit tests using pytest.
-* Configure local CI or script runner.
-* Replace obvious `TODO:`s; log remaining ones in `issues.md`.
+* Connect the AgentLingua parser to the editor.
+* Enable real-time or on-demand parsing (e.g., on every change or via a "Validate" button).
+* Display inline error markers and feedback as the user types.
+
+#### 5. Build output and feedback panel
+
+* Create a panel adjacent to the editor to display parse results (AST, confirmation, or error messages).
+* Show success/failure status after each parse.
+* For errors, display line/column info and highlight issues in the editor.
+
+#### 6. Add logging and debug area
+
+* Implement a collapsible log or console panel (typically at the bottom).
+* Display detailed parser messages, debug output, and raw parse results (e.g., AST or tokens).
+* Ensure the log area is scrollable and can be hidden or shown as needed.
 
 ---
 
