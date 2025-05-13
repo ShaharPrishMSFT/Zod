@@ -2,6 +2,18 @@
 
 <!--- COMPLETED-STEP SUMMARIES (append most salient take-aways, pitfalls, key decisions) --->
 
+- Minimal local implementation can be achieved as a static HTML/JS app using CodeMirror (preferred for MVP) and a JS PEG parser, with all dependencies loaded via CDN.
+- Main features: code editor with syntax highlighting, real-time/on-demand parsing, inline error feedback, file open/save via browser, output panel for AST/errors, collapsible log/debug area.
+- No build step or backend required; use browser APIs for file I/O.
+- Key risks: parser integration (PEG grammar compatibility with JS parser), custom syntax highlighting, mapping parser errors to editor positions.
+- Focus on practicality: minimal styling, rapid prototyping, and clear separation of concerns.
+
+- CodeMirror integrated via CDN, no build step.
+- Custom AgentLingua mode provides basic syntax highlighting for `.al` files.
+- Editor supports multi-line editing, indentation, undo/redo, and find/replace.
+- Minimal .al example loads by default.
+- Foundation set for future features (autocomplete, real-time parsing, etc.).
+
 - Editor must support real-time parsing and inline error feedback for `.al` files.
 - Split view: code editor (left), parse output (right), collapsible log/debug area (bottom).
 - File I/O should be seamless: load/save `.al` files via UI, no cumbersome edit-save cycles.
@@ -12,8 +24,8 @@
 
 ## Progress Tracker
 
-* 1. Reason about minimal local implementation ... [[STEP-1 STATUS: PENDING]]
-* 2. Integrate syntax-highlighting editor ... [[STEP-2 STATUS: PENDING]]
+* 1. Reason about minimal local implementation ... [[STEP-1 STATUS: DONE (2025-05-13)]]
+* 2. Integrate syntax-highlighting editor ... [[STEP-2 STATUS: DONE (2025-05-13)]]
 * 3. Implement file load/save functionality ... [[STEP-3 STATUS: PENDING]]
 * 4. Integrate real-time parser and validation ... [[STEP-4 STATUS: PENDING]]
 * 5. Build output and feedback panel ... [[STEP-5 STATUS: PENDING]]
@@ -63,18 +75,6 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
 
 ### Current Step Bodies
 
-#### 1. Reason about minimal local implementation
-
-* Analyze the playground requirements and available tools/libraries.
-* Identify the simplest way to get a working AgentLingua playground locally (e.g., static HTML with CodeMirror/Monaco, minimal/no build step, browser-based file I/O).
-* List any shortcuts, assumptions, or trade-offs to minimize setup and coding effort.
-* Document the minimal viable path and any blockers.
-
-#### 2. Integrate syntax-highlighting editor
-
-* Choose and set up a code editor component (e.g., CodeMirror or Monaco) with AgentLingua `.al` syntax highlighting.
-* Ensure support for multi-line editing, indentation, undo/redo, and find/replace.
-* Configure autocomplete/IntelliSense for AgentLingua keywords and actions.
 
 #### 3. Implement file load/save functionality
 
