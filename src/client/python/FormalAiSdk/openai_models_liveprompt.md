@@ -3,15 +3,17 @@
 <!--- COMPLETED-STEP SUMMARIES (append most salient take-aways, pitfalls, key decisions) --->
 <!-- Example: 1. OpenAI model support is best handled through LiteLLM; avoid redundant direct integration. -->
 1. LiteLLMExecutor supports OpenAI models; dependencies are up to date; all required OpenAI features are accessible via LiteLLM.
+2. OpenAI-related tests are opt-in only (require RUN_OPENAI_TESTS=1), expanded to cover both basic and error scenarios, ensuring robust and safe test coverage.
 ---
 
 ## Progress Tracker
 
 * 1. Review LiteLLMExecutor OpenAI support and dependencies ... [[STEP-1 STATUS: DONE (2025-05-13)]]
 * 2. Ensure OpenAI model configuration and credentials are handled via LiteLLM ... [[STEP-2 STATUS: DONE (2025-05-13)]]
-* 3. Update and expand tests for OpenAI usage through LiteLLM ... [[STEP-3 STATUS: PENDING]]
-* 4. Document OpenAI model usage via LiteLLM in SDK docs and examples ... [[STEP-4 STATUS: PENDING]]
-* 5. Review CI pipeline for OpenAI/LiteLLM coverage ... [[STEP-5 STATUS: PENDING]]
+* 3. Create unified model configuration entry points (`LlmModels.FromOpenAi`, `LlmModels.From`) with env-based defaults and tests ... [[STEP-3 STATUS: PENDING]]
+* 4. Update and expand tests for OpenAI usage through LiteLLM ... [[STEP-4 STATUS: DONE (2025-05-13)]]
+* 5. Document OpenAI model usage via LiteLLM in SDK docs and examples ... [[STEP-5 STATUS: PENDING]]
+* 6. Review CI pipeline for OpenAI/LiteLLM coverage ... [[STEP-6 STATUS: PENDING]]
 
 When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy the full step block to `prompt.archive.md`.
 
@@ -59,19 +61,26 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
 
 ### Current Step Bodies
 
-#### 3. Update and expand tests for OpenAI usage through LiteLLM
+#### 3. Create unified model configuration entry points (`LlmModels.FromOpenAi`, `LlmModels.From`) with env-based defaults and tests
+
+* Implement `LlmModels.FromOpenAi(openai_config)` to create model configs for OpenAI, with defaults that pull from environment variables (e.g., `OPENAI_API_KEY`, `OPENAI_MODEL`, etc.).
+* Implement `LlmModels.From(litellm_config)` for generic LiteLLM config, also with sensible env-based defaults.
+* Ensure both methods provide a clear, documented interface for model configuration.
+* Add/expand tests to verify correct config loading, env fallback, and error handling for both entry points.
+
+#### 4. Update and expand tests for OpenAI usage through LiteLLM
 
 * Add/expand unit tests for OpenAI model usage via LiteLLMExecutor.
 * Ensure test coverage for key OpenAI features.
 * Replace obvious `TODO:`s; log remaining ones in `issues.md`.
 
-#### 4. Document OpenAI model usage via LiteLLM in SDK docs and examples
+#### 5. Document OpenAI model usage via LiteLLM in SDK docs and examples
 
 * Update SDK documentation to show OpenAI usage through LiteLLM.
 * Add or update example scripts.
 * Update technical index and project snapshot.
 
-#### 5. Review CI pipeline for OpenAI/LiteLLM coverage
+#### 6. Review CI pipeline for OpenAI/LiteLLM coverage
 
 * Ensure CI runs all relevant tests for OpenAI via LiteLLM.
 * Document any CI-specific configuration for OpenAI credentials.
