@@ -1,80 +1,70 @@
-?start: (COMMENT | formal_decl_block | _NL)*
+// ----------  Tokens ----------
+COMMENT          : /[ \t]*#[^\n]*/            // any line‑comment (may start with spaces or tabs)
+INLINE_TEXT      : "[" /[^\]\n]*/ "]"         // text used by inline action/input
+EMBED_EXPR       : "{{"  /[^}]*/  "}}"        // formal expression embedded in natural text
+ID               : /[A-Za-z_][A-Za-z0-9_.]*/  // dotted or simple identifier
 
-##########################
-# Formal section         #
-##########################
+NAT_TEXT_LINE    : /(?!--end\b)(?!{{).*?/     // any text line that is not an --end or {{ … }} start
+NAT_LINE         : NAT_TEXT_LINE | EMBED_EXPR // one line inside a natural block
 
-formal_decl_stripped: "context" WS_INLINE* ID? WS_INLINE* any_expr_in_formal
-     | "function" WS_INLINE* ID WS_INLINE* any_expr_in_formal
-     | "rule"     WS_INLINE* ID? WS_INLINE* any_expr_in_formal
+_NL              : /(\r?\n)+/
+_WS              : /[ \t]+/
 
-formal_decl_block: WS_INLINE* formal_decl_stripped
-
-comment_or_formal_stmt: (COMMENT_IN_BLOCKS | formal_stmt_line | _NL)
-
-formal_block_stripped: "{" _NL? (_NL WS_INLINE* formal_stmt)* _NL? "}"
-
-formal_block: _NL formal_block_stripped
-
-any_block_body_stripped: WS_INLINE* formal_block_stripped
-          | WS_INLINE* natural_block_stripped
-
-any_block_body: _NL any_block_body_stripped
-formal_stmt_line:  _NL WS_INLINE* formal_stmt
-    | WS_INLINE* formal_stmt
-
-formal_stmt: if_stmt
-    | when_stmt
-    | input_stmt
-    | action_stmt
-    | nop_stmt
-
-if_stmt: "if" any_expr_in_formal "then" (any_expr_in_formal | formal_block_stripped) _NL? ("else" (any_expr_in_formal | formal_block_stripped))?
-when_stmt: "when" any_expr_in_formal "then" any_expr_in_formal
-input_stmt: "input" WS_INLINE* natural_inline
-action_stmt: "action" (any_expr_in_formal | formal_block_stripped)+
-nop_stmt: "nop"
-
-##########################
-# Natural section        #
-##########################
-
-natural_expr: natural_inline
-            | natural_block
-
-natural_inline: "[" natural_content "]"
-natural_block: _NL natural_block_stripped
-natural_block_stripped: NAT_BEGIN _NL natural_content _NL NAT_END _NL?
-NAT_BEGIN: "--begin"
-NAT_END: "--end"
-
-##########################
-# Mixed/embedded         #
-##########################
-
-formal_expr_in_natural: "{{" _NL? WS_INLINE* formal_stmt _NL? "}}"
-any_expr_in_formal: (natural_inline | formal_stmt | any_block_body)
-
-##########################
-# Primitives             #
-##########################
-
-ID: NAME ("." NAME)*
-NAME: /[A-Za-z][A-Za-z0-9_]*/
-
-natural_content: (formal_expr_in_natural | TEXT_CHAR | WS | _NL)*
-
-TEXT_CHAR: /[^\[\]{}\n]/   // any char except brackets, braces, or newline
-
-##########################
-# Tokens & helpers       #
-##########################
-
-_NL: /(?:\r?\n)+/
-COMMENT: /[ \t]*#[^\n]*/
-COMMENT_IN_BLOCKS: _NL COMMENT
-
-%import common.WS_INLINE
-%import common.WS
+%ignore _WS
 %ignore COMMENT
-%ignore COMMENT_IN_BLOCKS
+
+// ----------  Entry ----------
+start            : (_NL | COMMENT | decl)*
+
+decl             : context_decl
+                 | function_decl
+                 | rule_decl
+
+// ----------  Top‑level declarations ----------
+context_decl     : "context" ID? body
+function_decl    : "function" ID  body
+rule_decl        : "rule"    ID? body
+
+// ----------  Bodies ----------
+body             : natural_block
+                 | formal_block
+
+// Natural‑language body: --begin … --end
+natural_block    : _NL? "--begin" _NL NAT_LINE* "--end" _NL?
+
+// Formal curly‑brace block
+formal_block     : _NL? "{" _NL stmt* "}" _NL?
+
+// ----------  Statement list inside { … } ----------
+stmt             : _NL
+                 | action_stmt
+                 | input_stmt
+                 | if_stmt
+                 | when_stmt
+                 | nop_stmt
+                 | COMMENT
+
+// ----------  Primitive statements ----------
+action_stmt      : "action" action_body
+input_stmt       : "input"  input_body
+nop_stmt         : "nop"
+
+action_body      : INLINE_TEXT              // inline: action [x]
+                 | natural_block            // action --begin … --end
+                 | formal_block             // action { … }
+
+input_body       : INLINE_TEXT
+                 | natural_block
+                 | formal_block
+
+// ----------  Control flow ----------
+if_stmt          : "if" expr "then" formal_block
+                   ("else" formal_block)?
+
+when_stmt        : "when" expr "then" formal_block
+
+// ----------  Expressions (minimal for now) ----------
+expr             : INLINE_TEXT              -> inline_expr
+                 | natural_block            -> natural_expr
+                 | formal_block             -> block_expr
+                 | ID                       -> id_expr
