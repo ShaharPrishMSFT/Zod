@@ -13,3 +13,12 @@
   * `add_sample_code()` – writes dummy Python files to mimic real work.
   * `run(cmd, approve=True/False)` – invokes `git_procedure` with simulated approval.
 * Ensure sandbox root is covered by `.gitignore`.
+
+#### 3. Implement approval flows and English→CLI mapping (status only)
+
+* Extend `src/git_procedure.py`:
+
+  * Parse description like "Show me the status" into `git status`.
+  * Prompt user; on **yes** run command, on **no** exit with message.
+  * Stream output live.
+* Integrate with `GitSandbox` to operate inside sandbox repo.

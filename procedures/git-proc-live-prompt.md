@@ -6,7 +6,7 @@
 
 * 1. Survey existing repo layout & configs ... [[STEP-1 STATUS: DONE (2025-05-13)]]
 * 2. Build Git sandbox utility for isolated testing ... [[STEP-2 STATUS: DONE (2025-05-13)]]
-* 3. Implement approval flows and English→CLI mapping (status only) ... \[\[STEP-3 STATUS: PENDING]]
+* 3. Implement approval flows and English→CLI mapping (status only) ... [[STEP-3 STATUS: DONE (2025-05-13)]]
 * 4. Write tests using sandbox util (approve / decline) ... \[\[STEP-4 STATUS: PENDING]]
 
 **When a step is finished**
@@ -33,6 +33,7 @@
 
 1. Surveyed repo structure, key modules, tests, tooling, and quirks. (2025-05-13)
 2. Built Git sandbox utility for isolated testing and ensured .gitignore coverage. (2025-05-13)
+3. Implemented LLM-driven English→CLI mapping and sandboxed execution, removing approval prompt. (2025-05-13)
 
 ### Technical Index (max 10 items)
 
@@ -58,15 +59,6 @@
 ---
 
 ### Current Step Bodies
-
-#### 3. Implement approval flows and English→CLI mapping (status only)
-
-* Extend `src/git_procedure.py`:
-
-  * Parse description like "Show me the status" into `git status`.
-  * Prompt user; on **yes** run command, on **no** exit with message.
-  * Stream output live.
-* Integrate with `GitSandbox` to operate inside sandbox repo.
 
 #### 4. Write tests using sandbox util (approve / decline)
 
