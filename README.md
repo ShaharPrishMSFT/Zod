@@ -41,7 +41,7 @@ All changes to agent personalities, behaviors, or policies (including updates to
 > **Note:** Due to enterprise restrictions, the GitHub CLI cannot be used to open pull requests.  
 > Once your branch is ready, you must open the PR manually via the GitHub web interface.  
 > The workflow will provide all the information you need in copyable code blocks:  
-> - The PR creation URL  
+> - The PR creation URL (as an active link) 
 > - The branch name  
 > - The PR title  
 > - The PR description  
