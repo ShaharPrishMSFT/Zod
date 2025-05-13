@@ -37,7 +37,17 @@ Each personality folder must:
 
 **Policy Change Workflow:**  
 All changes to agent personalities, behaviors, or policies (including updates to any `readme.md` in personality folders) must be proposed and reviewed via GitHub pull requests.  
-- To propose a change, create a new branch and submit a pull request describing the intended update.
+
+> **Note:** Due to enterprise restrictions, the GitHub CLI cannot be used to open pull requests.  
+> Once your branch is ready, you must open the PR manually via the GitHub web interface.  
+> The workflow will provide all the information you need in copyable code blocks:  
+> - The PR creation URL  
+> - The branch name  
+> - The PR title  
+> - The PR description  
+
+- To propose a change, create a new branch and push your changes.
+- When ready for review, use the provided information to open a pull request manually on GitHub.
 - All policy changes require review and approval before merging.
 - Direct commits to main or feature branches for policy/personality changes are not permitted.
 - This ensures all policy and behavioral changes are transparent, auditable, and collaboratively reviewed.
@@ -63,9 +73,31 @@ Worktrees can exchange requests and collaborate through a structured communicati
 
 1. Create a new branch for your proposed change.
 2. Edit the relevant `readme.md` or policy file in the appropriate personality folder.
-3. Open a pull request on GitHub, clearly describing the change and its rationale.
-4. Request review from project maintainers.
-5. Once approved, merge the pull request.
+3. Push your branch to GitHub.
+4. When ready, use the following information to open a pull request manually:
+
+**PR Creation URL**
+```
+https://github.com/[your-org-or-user]/[repo]/pull/new/[your-branch-name]
+```
+
+**Branch Name**
+```
+[your-branch-name]
+```
+
+**PR Title**
+```
+[Concise PR title]
+```
+
+**PR Description**
+```
+[Detailed description of the change, rationale, and any relevant context.]
+```
+
+5. Request review from project maintainers.
+6. Once approved, merge the pull request.
 
 ## Example: Listing Active Branches in Personality readme.md
 
