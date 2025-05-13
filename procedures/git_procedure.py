@@ -1,5 +1,6 @@
 import sys
 import subprocess
+import time
 from pathlib import Path
 
 # Import GitSandbox from the correct path
@@ -49,16 +50,25 @@ def get_git_command_from_llm(english_instruction):
     return None
 
 def main():
+    overall_start = time.time()
     parser = argparse.ArgumentParser(description="LLM-powered English-to-git CLI agent")
     parser.add_argument("--print-only", action="store_true", help="Only print the mapped git command, do not execute it")
     parser.add_argument("--repo", type=str, help="Path to an existing git repo to use (for testing)")
+    parser.add_argument("--capture-output", action="store_true", help="Print only the output of the git command (for test harnesses)")
     parser.add_argument("instruction", nargs="+", help="English instruction to map to git command")
     args = parser.parse_args()
 
     english_instruction = " ".join(args.instruction).strip()
     git_cmd_str = get_git_command_from_llm(english_instruction)
     if not git_cmd_str:
-        print("LLM did not return a command.")
+        print("LLM did not return a command.", file=sys.stderr)
+        # Debug: print session messages if available
+        try:
+            from FormalAiSdk.sdk.session import ModelSession
+            print("Debug: LLM session messages:", file=sys.stderr)
+            print(getattr(ModelSession, "messages", "No session messages attribute"), file=sys.stderr)
+        except Exception as e:
+            print(f"Debug: Could not print session messages: {e}", file=sys.stderr)
         sys.exit(1)
 
     if args.print_only:
@@ -71,33 +81,26 @@ def main():
     import shlex
     git_cmd = shlex.split(git_cmd_str)
 
-    if args.repo:
-        repo_dir = Path(args.repo)
-        if not (repo_dir / ".git").exists():
-            print(f"Provided repo path {repo_dir} is not a git repository.")
-            sys.exit(1)
-        proc = subprocess.Popen(
-            git_cmd,
-            cwd=repo_dir,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1,
-        )
-        for line in proc.stdout:
-            print(line, end="")
-        proc.wait()
-    else:
-        # Set up or use existing sandbox in a temp directory
-        with tempfile.TemporaryDirectory() as tmpdir:
-            sandbox = GitSandbox(root_dir=tmpdir).setup()
-            # Ensure at least one commit exists for git status to work
-            sandbox.add_sample_code().commit()
-
-            # Run the git command in the sandbox repo, streaming output live
+    def run_and_time_git_command(cmd, cwd, capture_output=False):
+        import sys
+        print(f"[Timing] Running: {' '.join(cmd)}", file=sys.stderr)
+        start = time.time()
+        if capture_output:
+            proc = subprocess.run(
+                cmd,
+                cwd=cwd,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            print(proc.stdout, end="")
+            end = time.time()
+            print(f"[Timing] Command took {end - start:.3f} seconds", file=sys.stderr)
+            return proc.returncode
+        else:
             proc = subprocess.Popen(
-                git_cmd,
-                cwd=sandbox.repo_dir,
+                cmd,
+                cwd=cwd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
@@ -106,7 +109,28 @@ def main():
             for line in proc.stdout:
                 print(line, end="")
             proc.wait()
+            end = time.time()
+            print(f"[Timing] Command took {end - start:.3f} seconds", file=sys.stderr)
+            return proc.returncode
 
+    if args.repo:
+        repo_dir = Path(args.repo)
+        if not (repo_dir / ".git").exists():
+            print(f"Provided repo path {repo_dir} is not a git repository.")
+            sys.exit(1)
+        run_and_time_git_command(git_cmd, repo_dir, capture_output=args.capture_output)
+    else:
+        # Set up or use existing sandbox in a temp directory
+        with tempfile.TemporaryDirectory() as tmpdir:
+            sandbox = GitSandbox(root_dir=tmpdir).setup()
+            # Ensure at least one commit exists for git status to work
+            sandbox.add_sample_code().commit()
+
+            # Run the git command in the sandbox repo, streaming output live
+            run_and_time_git_command(git_cmd, sandbox.repo_dir, capture_output=args.capture_output)
+
+    overall_end = time.time()
+    print(f"[Timing] Total playground session took {overall_end - overall_start:.3f} seconds", file=sys.stderr)
 
 if __name__ == "__main__":
     main()
