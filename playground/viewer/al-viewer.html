@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AgentLingua .al Flow Diagram Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Mermaid.js CDN for flow diagrams -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f7f7fa;
+      color: #222;
+    }
+    header {
+      background: #3b3b4f;
+      color: #fff;
+      padding: 1rem 2rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 2rem;
+    }
+    .file-input-area {
+      border: 2px dashed #bbb;
+      border-radius: 6px;
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      background: #fafaff;
+      transition: border-color 0.2s;
+    }
+    .file-input-area.dragover {
+      border-color: #3b3b4f;
+      background: #f0f0ff;
+    }
+    #diagram {
+      min-height: 300px;
+      background: #f4f6fa;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-top: 1rem;
+      overflow-x: auto;
+    }
+    footer {
+      text-align: center;
+      color: #888;
+      font-size: 0.95em;
+      margin: 2rem 0 1rem 0;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      .file-input-area { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AgentLingua <code>.al</code> Flow Diagram Viewer</h1>
+    <p>Visualize AgentLingua files as interactive flow diagrams. No installation required.</p>
+  </header>
+  <div class="container">
+    <div class="file-input-area" id="fileInputArea">
+      <p><strong>Select an <code>.al</code> file</strong> or drag & drop it here.</p>
+      <input type="file" id="fileInput" accept=".al" style="display:none;">
+      <button id="selectFileBtn">Choose File</button>
+      <div id="fileName" style="margin-top:1em;color:#555;"></div>
+    </div>
+    <div id="diagram">
+      <em>No file loaded. The flow diagram will appear here.</em>
+    </div>
+  </div>
+  <footer>
+    &copy; 2025 AgentLingua Playground &mdash; <a href="https://mermaid-js.github.io/" target="_blank" rel="noopener">Powered by Mermaid.js</a>
+  </footer>
+  <script>
+    // UI: File input and drag-and-drop
+    const fileInput = document.getElementById('fileInput');
+    const selectFileBtn = document.getElementById('selectFileBtn');
+    const fileInputArea = document.getElementById('fileInputArea');
+    const fileNameDiv = document.getElementById('fileName');
+    selectFileBtn.onclick = () => fileInput.click();
+    fileInput.onchange = (e) => {
+      if (fileInput.files.length) {
+        fileNameDiv.textContent = fileInput.files[0].name;
+        // Placeholder: diagram rendering will be implemented later
+      }
+    };
+    fileInputArea.ondragover = (e) => {
+      e.preventDefault();
+      fileInputArea.classList.add('dragover');
+    };
+    fileInputArea.ondragleave = (e) => {
+      e.preventDefault();
+      fileInputArea.classList.remove('dragover');
+    };
+    fileInputArea.ondrop = (e) => {
+      e.preventDefault();
+      fileInputArea.classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length) {
+        fileInput.files = files;
+        fileInput.onchange();
+      }
+    };
+  </script>
+</body>
+</html>
