@@ -13,3 +13,11 @@
 * Note: Custom mode setup may require additional effort; focus on basic highlighting first, then expand.
 
 ---
+
+#### 3. Implement file load/save functionality
+
+* Add UI controls (buttons or menu) for "Open" and "Save" actions.
+* Implement file input for loading `.al` files into the editor.
+* Enable exporting/saving the current editor content as a `.al` file or to clipboard.
+
+---

@@ -16,7 +16,7 @@
 
 - Editor must support real-time parsing and inline error feedback for `.al` files.
 - Split view: code editor (left), parse output (right), collapsible log/debug area (bottom).
-- File I/O should be seamless: load/save `.al` files via UI, no cumbersome edit-save cycles.
+- File I/O is seamless: Open/Save/Copy controls use browser APIs for loading and exporting `.al` files, with user feedback and no backend or build step required.
 - Inline error markers and hover tooltips are essential for usability.
 - Responsive layout: horizontal split on large screens, tabbed panels on small screens.
 
@@ -26,10 +26,12 @@
 
 * 1. Reason about minimal local implementation ... [[STEP-1 STATUS: DONE (2025-05-13)]]
 * 2. Integrate syntax-highlighting editor ... [[STEP-2 STATUS: DONE (2025-05-13)]]
-* 3. Implement file load/save functionality ... [[STEP-3 STATUS: PENDING]]
-* 4. Integrate real-time parser and validation ... [[STEP-4 STATUS: PENDING]]
-* 5. Build output and feedback panel ... [[STEP-5 STATUS: PENDING]]
-* 6. Add logging and debug area ... [[STEP-6 STATUS: PENDING]]
+* 3. Implement file load/save functionality ... [[STEP-3 STATUS: DONE (2025-05-13)]]
+* 4. Plan for building tests to test the UI to see that it's working ... [[STEP-4 STATUS: PENDING]]
+* 5. Implement the tests to the current functionality ... [[STEP-5 STATUS: PENDING]]
+* 6. Integrate real-time parser and validation ... [[STEP-6 STATUS: PENDING]]
+* 7. Build output and feedback panel ... [[STEP-7 STATUS: PENDING]]
+* 8. Add logging and debug area ... [[STEP-8 STATUS: PENDING]]
 
 When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy the full step block to `prompt.archive.md`.
 
@@ -75,26 +77,33 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
 
 ### Current Step Bodies
 
+#### 4. Plan for building tests to test the UI to see that it's working
 
-#### 3. Implement file load/save functionality
+* Identify which UI features require testing (Open, Save, Copy, editor initialization, status messages).
+* Decide on the testing approach: automated browser tests (e.g., Playwright, Cypress) or manual test scripts/checklists.
+* Specify test cases for each feature (e.g., file loads into editor, save triggers download, copy updates clipboard, status messages appear).
+* Determine how to verify results (file content, clipboard content, UI updates).
 
-* Add UI controls (buttons or menu) for "Open" and "Save" actions.
-* Implement file input for loading `.al` files into the editor.
-* Enable exporting/saving the current editor content as a `.al` file or to clipboard.
+#### 5. Implement the tests to the current functionality
 
-#### 4. Integrate real-time parser and validation
+* Set up the chosen test framework or manual test checklist.
+* Write and organize tests for each UI feature as planned in step 4.
+* Run the tests and document results.
+* Adjust implementation or tests as needed based on failures or gaps.
+
+#### 6. Integrate real-time parser and validation
 
 * Connect the AgentLingua parser to the editor.
 * Enable real-time or on-demand parsing (e.g., on every change or via a "Validate" button).
 * Display inline error markers and feedback as the user types.
 
-#### 5. Build output and feedback panel
+#### 7. Build output and feedback panel
 
 * Create a panel adjacent to the editor to display parse results (AST, confirmation, or error messages).
 * Show success/failure status after each parse.
 * For errors, display line/column info and highlight issues in the editor.
 
-#### 6. Add logging and debug area
+#### 8. Add logging and debug area
 
 * Implement a collapsible log or console panel (typically at the bottom).
 * Display detailed parser messages, debug output, and raw parse results (e.g., AST or tokens).
