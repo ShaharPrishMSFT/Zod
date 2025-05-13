@@ -14,13 +14,19 @@ __pycache__/
 *$py.class
 *.so
 .Python
-.env
-.venv
-env/
-venv/
-.pytest_cache/
 
 # Distribution/packaging
 dist/
 build/
 *.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.env
+.venv
+env/
+venv/
+
+# Testing
+.pytest_cache/
