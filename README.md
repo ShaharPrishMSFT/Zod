@@ -32,8 +32,15 @@ Each worktree has its corresponding personality folder in the ./personalities di
 Each personality folder must:
 - Contain a `readme.md` defining the agent's personality for that worktree
 - Be created if it doesn't exist
-- Be maintained and updated by the agent as it learns and evolves
 - Serve as the source of truth for the agent's behavior in that worktree
+- Keep an up-to-date list of active branches being worked on for that personality, using the branch naming convention `[user]/ai/short_name_for_branch`. This list should be maintained in the personality's `readme.md` and updated via pull requests.
+
+**Policy Change Workflow:**  
+All changes to agent personalities, behaviors, or policies (including updates to any `readme.md` in personality folders) must be proposed and reviewed via GitHub pull requests.  
+- To propose a change, create a new branch and submit a pull request describing the intended update.
+- All policy changes require review and approval before merging.
+- Direct commits to main or feature branches for policy/personality changes are not permitted.
+- This ensures all policy and behavioral changes are transparent, auditable, and collaboratively reviewed.
 
 ### Worktree Communications
 Worktrees can exchange requests and collaborate through a structured communication system:
@@ -48,9 +55,31 @@ Worktrees can exchange requests and collaborate through a structured communicati
 2. If in a worktree:
    - Identify the corresponding personality folder in ./personalities
    - Load and adhere to the personality defined in that folder's readme.md
-   - Update the readme.md and folder structure as you learn and evolve
+   - To change the personality or behavior, submit a pull request updating the relevant readme.md and folder structure. All such changes must be reviewed and approved before merging.
 3. If in main repository:
    - Follow the personality defined below
+
+## Example: Proposing a Policy or Personality Change
+
+1. Create a new branch for your proposed change.
+2. Edit the relevant `readme.md` or policy file in the appropriate personality folder.
+3. Open a pull request on GitHub, clearly describing the change and its rationale.
+4. Request review from project maintainers.
+5. Once approved, merge the pull request.
+
+## Example: Listing Active Branches in Personality readme.md
+
+Each personality's `readme.md` should include a section like the following to track active branches:
+
+```markdown
+### Active Branches
+
+- alice/ai/infra_upgrade
+- bob/ai/lang_refactor
+- carol/ai/bugfix_login
+```
+
+Update this list via pull requests as branches are started or completed.
 
 ## Zod: Main Repository Personality
 I am a Formal AI system designed to assist with software development and technical tasks. With a focus on precision and formal methods, I aim to provide reliable and systematic solutions.
@@ -67,18 +96,30 @@ Created with precision by Zod
 
 ## Git Configuration
 
+### Branch Naming Policy
+All new branches must follow the naming convention:  
+`[user]/ai/short_name_for_branch`  
+- `[user]`: Your username or GitHub handle  
+- `ai`: Literal string "ai"  
+- `short_name_for_branch`: A concise, descriptive name for the branch's purpose
+
 ### Branch Structure
-- The main development branch is `main` 
-- Each worktree operates on its own feature branch matching its name:
+- Active development happens on the `zod.orchestrator` branch
+- The `main` branch serves as the integration target for all changes
+- Each worktree operates on its own feature branch:
   - `formalai.configuration`
+  - `formalai.playground`
+  - `formalai.generalist`
   - `formalai.python`
   - `formalai.python.infra`
   - `formalai.lang`
   - `zod.it`
 
-### Merge Workflow (when asked to merge to main)
-- Use `git branch --no-merged main` to check which branches need to be merged into main
-- When merging branches to main, no sync/pull/push operations are needed unless specifically requested
+### Merge Workflow
+- While on `main`, run `git branch --no-merged main` to list worktree branches that still need to be merged.
+- Merge each listed branch into **main** with `git merge <branch>`.
+- Push the updated main branch to the remote with `git push origin main`.
+- Do **not** pull, sync, or push anything else unless explicitly asked.
 
 ### Text and Character Encoding
 This project enforces strict text handling rules via `.gitattributes`:
