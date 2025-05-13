@@ -1,5 +1,10 @@
 """
-Test suite for the agentic git procedure tool.
+IMPORTANT: This is a true LLM integration test suite.
+
+Some agents (who shall remain unnamed) may be tempted to "fake" results by providing fallback logic or mock mappings.
+Good agents do NOT do this. These tests must only pass if the LLM/tool pipeline produces the correct result.
+
+TODO: If the LLM fails to produce a valid command, retry with a stronger model before failing the test.
 
 By default, these tests use the real agentic utility (git_procedure.py) to map English instructions to git commands via LLM.
 
@@ -67,60 +72,31 @@ import subprocess
 
 def run_tool_and_command(sandbox, instruction, print_output=False):
     """
-    Simulate the agentic tool: by default, call the real agentic utility (git_procedure.py) to map instruction to command.
-    If USE_LLM_MOCK=1 is set in the environment, use the INSTRUCTION_TO_COMMAND mapping for deterministic testing.
+    Simulate the agentic tool: call the real agentic utility (git_procedure.py) to map instruction to command.
+
+    IMPORTANT: There is NO fallback or mock mapping in this code path.
+    The test will only pass if the LLM/tool pipeline produces the correct result.
+
+    TODO: If the LLM fails to produce a valid command, retry with a stronger model before failing the test.
     """
-    use_mock = os.environ.get("USE_LLM_MOCK") == "1"
     output = ""
-    print(f"DEBUG: use_mock = {use_mock}")
-    if use_mock:
-        if instruction not in INSTRUCTION_TO_COMMAND:
-            print(f"MOCK MODE ERROR: Instruction not found in mapping: {instruction}")
-            print(f"Available keys: {list(INSTRUCTION_TO_COMMAND.keys())}")
-            # Print a fuzzy match suggestion
-            import difflib
-            close = difflib.get_close_matches(instruction, INSTRUCTION_TO_COMMAND.keys())
-            if close:
-                print(f"Did you mean: {close[0]}")
-            raise KeyError(f"Instruction not found in INSTRUCTION_TO_COMMAND: {instruction}")
-        command = INSTRUCTION_TO_COMMAND[instruction]
-        print(f"MOCK MODE: Using command '{command}' for instruction '{instruction}'")
-        print(f"DEBUG: command to execute = {command!r}")
-        # Actually execute the mapped command(s) in the sandbox
-        output = ""
-        for cmd in command.split("&&"):
-            cmd = cmd.strip()
-            proc = sandbox.run_git_command(
-                cmd,
-                capture_output=True,
-                text=True,
-                check=True
-            )
-            if print_output and proc is not None:
-                out = ""
-                if hasattr(proc, "stdout") and proc.stdout:
-                    out += proc.stdout.decode() if isinstance(proc.stdout, bytes) else str(proc.stdout)
-                if hasattr(proc, "stderr") and proc.stderr:
-                    out += proc.stderr.decode() if isinstance(proc.stderr, bytes) else str(proc.stderr)
-                output += out
-    else:
-        # Call the real agentic utility as a subprocess
-        proc = subprocess.run(
-            [
-                sys.executable,
-                os.path.join(os.path.dirname(__file__), "git_procedure.py"),
-                "--capture-output",
-                "--repo", sandbox.repo_dir,
-                instruction
-            ],
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        command = proc.stdout.strip()
-        # In agentic mode, the subprocess call above already runs the full command via git_procedure.py
-        if print_output and command:
-            output += command
+    # Call the real agentic utility as a subprocess
+    proc = subprocess.run(
+        [
+            sys.executable,
+            os.path.join(os.path.dirname(__file__), "git_procedure.py"),
+            "--capture-output",
+            "--repo", sandbox.repo_dir,
+            instruction
+        ],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    command = proc.stdout.strip()
+    # In agentic mode, the subprocess call above already runs the full command via git_procedure.py
+    if print_output and command:
+        output += command
     if print_output:
         print_llm_mapping(instruction, command, output)
     else:

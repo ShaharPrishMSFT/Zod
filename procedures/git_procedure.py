@@ -1,3 +1,5 @@
+# WARNING: No fallbacks, mappings, or tricks are allowed in this file.
+# All answers must come from the LLM. Do not add any hardcoded mappings or bypass logic.
 import sys
 import subprocess
 import time
