@@ -7,6 +7,7 @@
 1. Project exists in a git worktree with Python 3.13/pip installed; minimal additional setup needed.
 2. Grammar defined in PEG format, follows existing grammar.peg specification; project structure aligns with Python package standards.
 3. Implemented core lexical elements: lexer with comment/newline tokens, line tracking, initial tests added.
+3. Refactored to Lark-based parser: loads PEG grammar, exposes parse tree API, removes legacy lexer/parser.
 
 <!--- (Old step bodies are copied verbatim to `prompt.archive.md` by the agent) --->
 
@@ -16,10 +17,11 @@
 
 * 1. Bootstrap environment & prerequisites ... \[\[STEP-1 STATUS: DONE (2025-05-13)]]
 * 2. Draft minimal spec & directory layout ... \[\[STEP-2 STATUS: DONE (2025-05-13)]]
-* 3. Implement Core Lexical Elements ... \[\[STEP-3 STATUS: DONE (2025-05-13)]]
-* 4. Implement Context Parser ... \[\[STEP-4 STATUS: PENDING]]
-* 5. Expand Parser with Input and Rule Support ... \[\[STEP-5 STATUS: PENDING]]
-* 6. Parser Validation and Enhancement ... \[\[STEP-6 STATUS: PENDING]]
+* 3. Refactor to Lark/PEG-based Parser (peg_validation example) ... [[STEP-3 STATUS: DONE (2025-05-13)]]
+* 4. Implement Core Lexical Elements ... [[STEP-4 STATUS: DONE (2025-05-13)]]
+* 5. Implement Context Parser ... [[STEP-5 STATUS: PENDING]]
+* 6. Expand Parser with Input and Rule Support ... [[STEP-6 STATUS: PENDING]]
+* 7. Parser Validation and Enhancement ... [[STEP-7 STATUS: PENDING]]
 
 When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy the full step block to `prompt.archive.md`.
 
@@ -65,7 +67,7 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
 
 ### Current Step Bodies
 
-#### 3. Implement Core Lexical Elements
+#### 4. Implement Core Lexical Elements
 * Create base Parser class fundamentals:
   - Token stream initialization
   - Basic error recording
@@ -83,7 +85,7 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
   - Comment parsing tests
   - Newline handling tests
 
-#### 4. Implement Context Parser
+#### 5. Implement Context Parser
 * Add context block parsing:
   - formal_decl_block for context declarations
   - natural_block with --begin/--end
@@ -97,7 +99,7 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
   - Missing delimiter detection
   - Context syntax validation
 
-#### 5. Expand Parser with Input and Rule Support
+#### 6. Expand Parser with Input and Rule Support
 * Implement input statement parsing:
   - input_stmt node type
   - natural_inline handling for [parameters]
@@ -112,7 +114,7 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
   - Rule condition/action structure validation
 * Add unit tests for input and rule parsing
 
-#### 6. Parser Validation and Enhancement
+#### 7. Parser Validation and Enhancement
 * Add syntax validation:
   - Complete block structure validation
   - Nested block handling

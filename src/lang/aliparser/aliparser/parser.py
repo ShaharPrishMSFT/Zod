@@ -1,172 +1,71 @@
-from __future__ import annotations
+from pathlib import Path
+from lark import Lark, Tree, UnexpectedInput, UnexpectedToken
+from typing import Optional, Union
 
-"""
-Light-weight lexical scanner for AgentLingua source.
+class ParserError(Exception):
+    """Custom exception for parser errors with context."""
+    def __init__(self, message: str, line: Optional[int] = None, column: Optional[int] = None, context: Optional[str] = None):
+        super().__init__(message)
+        self.line = line
+        self.column = column
+        self.context = context
 
-This module purposefully limits itself to *lexing only* for STEP-3 of the
-ali-parser roadmap.  It recognises:
+    def __str__(self):
+        base = super().__str__()
+        if self.line is not None and self.column is not None:
+            base += f" (line {self.line}, column {self.column})"
+        if self.context:
+            base += f"\nContext:\n{self.context}"
+        return base
 
-    • COMMENT              – single-line “# …” until end-of-line
-    • COMMENT_IN_BLOCKS    – “/* … */” multi-line comment
-    • _NL                  – normalised newline token (\\n or \\r\\n)
+class AgentLinguaParser:
+    """
+    Lark-based parser for AgentLingua using PEG grammar.
+    Loads grammar from src/lang/grammar/grammar.peg.
+    """
 
-All other characters are currently skipped; full tokenisation will be added
-in subsequent steps.
+    def __init__(self, grammar_path: Optional[Union[str, Path]] = None):
+        if grammar_path is None:
+            # Default to grammar file relative to this file
+            grammar_path = Path(__file__).parent.parent.parent / "grammar" / "grammar.peg"
+        else:
+            grammar_path = Path(grammar_path)
+        with open(grammar_path, "r", encoding="utf-8") as f:
+            grammar = f.read()
+        self.lark = Lark(grammar, start="start", parser="earley")
 
-The scanner maintains line / column counters and records simple error strings
-(e.g. unterminated block comment).  Down-stream parser stages may choose to
-consume the `Token` objects or access `.errors` for diagnostics.
-"""
+    def parse(self, source: str) -> Tree:
+        """
+        Parse AgentLingua source code from a string.
+        Returns a Lark parse tree.
+        Raises ParserError on failure.
+        """
+        try:
+            return self.lark.parse(source)
+        except UnexpectedToken as e:
+            raise ParserError(
+                f"Unexpected token: {e.token}",
+                line=e.line,
+                column=e.column,
+                context=e.get_context(source)
+            ) from e
+        except UnexpectedInput as e:
+            raise ParserError(
+                "Unexpected input",
+                line=getattr(e, "line", None),
+                column=getattr(e, "column", None),
+                context=e.get_context(source) if hasattr(e, "get_context") else None
+            ) from e
+        except Exception as e:
+            raise ParserError(f"Parser error: {str(e)}") from e
 
-from dataclasses import dataclass
-import re
-from typing import List, Sequence
-
-
-@dataclass(slots=True)
-class Token:
-    """A minimal token structure suitable for early bootstrap work."""
-    type: str
-    value: str
-    line: int
-    column: int
-
-
-class Lexer:
-    _RE_NEWLINE = re.compile(r"\r\n|\n")  # recognise CRLF & LF
-
-    def __init__(self, text: str) -> None:
-        self.text: str = text
-        self.pos: int = 0
-        self.line: int = 1
-        self.col: int = 1
-        self.length: int = len(text)
-
-        self._tokens: list[Token] = []
-        self.errors: list[str] = []
-
-        self._scan()
-
-    # --------------------------------------------------------------------- #
-    # Public API                                                            #
-    # --------------------------------------------------------------------- #
-
-    def tokens(self) -> Sequence[Token]:
-        """Return immutable view of produced tokens."""
-        return tuple(self._tokens)
-
-    # --------------------------------------------------------------------- #
-    # Internal helpers                                                      #
-    # --------------------------------------------------------------------- #
-
-    def _peek(self, offset: int = 0) -> str:
-        idx = self.pos + offset
-        if idx < self.length:
-            return self.text[idx]
-        return ""
-
-    def _advance(self, count: int = 1) -> None:
-        """Advance `count` characters updating line/col trackers."""
-        for _ in range(count):
-            if self.pos >= self.length:
-                return
-            ch = self.text[self.pos]
-            self.pos += 1
-            if ch == "\n":
-                self.line += 1
-                self.col = 1
-            else:
-                self.col += 1
-
-    # ------------------------------------------------------------------ #
-
-    def _scan(self) -> None:  # noqa: C901  – early bootstrap
-        while self.pos < self.length:
-            ch = self._peek()
-
-            # -------- Whitespace (except newline) ----------------------- #
-            if ch in {" ", "\t", "\r"}:
-                self._advance()
-                continue
-
-            # -------- Newline ------------------------------------------ #
-            if ch == "\n":
-                self._emit("_NL", "\n")
-                self._advance()
-                continue
-
-            # -------- Single-line comment ------------------------------ #
-            if ch == "#":
-                start_col = self.col
-                start_pos = self.pos
-                # consume until newline or EOF
-                while self._peek() not in {"\n", ""}:
-                    self._advance()
-                value = self.text[start_pos:self.pos]
-                self._emit("COMMENT", value, start_line=self.line, start_col=start_col)
-                continue
-
-            # -------- Block comment ------------------------------------ #
-            if ch == "/" and self._peek(1) == "*":
-                start_line, start_col = self.line, self.col
-                self._advance(2)  # skip '/*'
-                content_start = self.pos
-                terminated = False
-                while self.pos < self.length:
-                    if self._peek() == "*" and self._peek(1) == "/":
-                        value = self.text[content_start:self.pos]
-                        self._advance(2)
-                        terminated = True
-                        break
-                    self._advance()
-                if not terminated:
-                    # Unterminated comment till EOF
-                    value = self.text[content_start:]
-                    self.errors.append(
-                        f"Unterminated block comment starting "
-                        f"at {start_line}:{start_col}"
-                    )
-                self._emit(
-                    "COMMENT_IN_BLOCKS",
-                    value,
-                    start_line=start_line,
-                    start_col=start_col,
-                )
-                continue
-
-            # -------- Unknown chars (skip for now) ---------------------- #
-            self._advance()
-
-    # ------------------------------------------------------------------ #
-
-    def _emit(
-        self,
-        type_: str,
-        value: str,
-        *,
-        start_line: int | None = None,
-        start_col: int | None = None,
-    ) -> None:
-        tok = Token(
-            type=type_,
-            value=value,
-            line=start_line if start_line is not None else self.line,
-            column=start_col if start_col is not None else self.col,
-        )
-        self._tokens.append(tok)
-
-
-# ---------------------------------------------------------------------- #
-# Minimal parser façade (placeholder)                                    #
-# ---------------------------------------------------------------------- #
-
-
-class Parser:
-    """Stub parser exposing only lexing for STEP-3."""
-
-    def __init__(self, source: str) -> None:
-        self.lexer = Lexer(source)
-
-    def lex(self) -> Sequence[Token]:
-        """Return the token stream produced by the lexer."""
-        return self.lexer.tokens()
+    def parse_file(self, file_path: Union[str, Path]) -> Tree:
+        """
+        Parse AgentLingua source code from a file.
+        Returns a Lark parse tree.
+        Raises ParserError on failure.
+        """
+        file_path = Path(file_path)
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return self.parse(content)
