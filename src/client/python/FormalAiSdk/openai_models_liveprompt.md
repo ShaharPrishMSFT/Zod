@@ -2,12 +2,12 @@
 
 <!--- COMPLETED-STEP SUMMARIES (append most salient take-aways, pitfalls, key decisions) --->
 <!-- Example: 1. OpenAI model support is best handled through LiteLLM; avoid redundant direct integration. -->
-
+1. LiteLLMExecutor supports OpenAI models; dependencies are up to date; all required OpenAI features are accessible via LiteLLM.
 ---
 
 ## Progress Tracker
 
-* 1. Review LiteLLMExecutor OpenAI support and dependencies ... [[STEP-1 STATUS: PENDING]]
+* 1. Review LiteLLMExecutor OpenAI support and dependencies ... [[STEP-1 STATUS: DONE (2025-05-13)]]
 * 2. Ensure OpenAI model configuration and credentials are handled via LiteLLM ... [[STEP-2 STATUS: PENDING]]
 * 3. Update and expand tests for OpenAI usage through LiteLLM ... [[STEP-3 STATUS: PENDING]]
 * 4. Document OpenAI model usage via LiteLLM in SDK docs and examples ... [[STEP-4 STATUS: PENDING]]
@@ -58,12 +58,6 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
 ---
 
 ### Current Step Bodies
-
-#### 1. Review LiteLLMExecutor OpenAI support and dependencies
-
-* Confirm LiteLLMExecutor supports OpenAI models (e.g., GPT-3.5, GPT-4).
-* Ensure LiteLLM and its dependencies are installed and up to date.
-* Verify that all required OpenAI features (e.g., function calling, system messages) are accessible via LiteLLM.
 
 #### 2. Ensure OpenAI model configuration and credentials are handled via LiteLLM
 

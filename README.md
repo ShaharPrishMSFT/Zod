@@ -98,7 +98,20 @@ This project enforces strict text handling rules via `.gitattributes`:
    - Specific handling for archives, images, and fonts
    - Prevents text conversion for binary content
 
-## Installation
+## Secrets Setup
+
+To set up your environment secrets:
+
+1. Run the PowerShell script to automate setup (Windows/PowerShell users):
+   ```
+   scripts/setup_env.ps1
+   ```
+   - This will copy `.env.example` to `.env` if needed, prompt you for required secrets, and optionally install dependencies and pre-commit hooks.
+
+2. Alternatively, set up manually:
+   - Copy `.env.example` to `.env`
+   - Fill in your secret values (e.g., `OPENAI_API_KEY`, and `OPENAI_API_BASE` if using a custom endpoint)
+   - **Never commit `.env` to version control**
 
 For detailed installation instructions, refer to our [Installation Guide](./docs/installation/readme.md). The guide covers:
 - Setting up Ollama for local LLM support
