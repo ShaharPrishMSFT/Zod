@@ -1,12 +1,28 @@
 {
-    "procedures": [
-        {
-            "name": "echo",
-            "description": "A simple procedure that takes a parameter and prints it."
-        },
-        {
-            "name": "discovery",
-            "description": "A procedure that interacts with the Ollama LLM to process input text and includes the procedures.json content as context."
-        }
-    ]
+  "procedures": {
+    "regex_forge": {
+      "description": "Interactive regex pattern generator and tester",
+      "inputs": ["natural_language_description", "test_data"],
+      "outputs": ["regex_pattern", "test_results"],
+      "dependencies": ["FormalAiSdk"]
+    },
+    "config_docmaker": {
+      "description": "Config file validator and documentation generator",
+      "inputs": ["config_file_path"],
+      "outputs": ["validation_report", "documentation"],
+      "dependencies": ["FormalAiSdk", "pyyaml"]
+    },
+    "snap_tune": {
+      "description": "Code performance analyzer and optimizer",
+      "inputs": ["code_snippet", "performance_criteria"],
+      "outputs": ["profiling_results", "optimized_code"],
+      "dependencies": ["FormalAiSdk", "cProfile"]
+    },
+    "todo_harvester": {
+      "description": "TODO comment analyzer and issue generator",
+      "inputs": ["codebase_path"],
+      "outputs": ["structured_issues", "similarity_clusters"],
+      "dependencies": ["FormalAiSdk", "numpy"]
+    }
+  }
 }
