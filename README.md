@@ -17,6 +17,7 @@ This repository uses multiple worktrees for different components:
 - `worktrees/formalai.lang/` - Formal AI language implementation
 - `worktrees/zod.it/` - IT automation and tooling
 - `worktrees/formalai.generalist/` - General use cases and procedures
+- `worktrees/formalai.playground/` - Experimental features and prototypes
 
 Each worktree has its corresponding personality folder in the ./personalities directory:
 - `./personalities/formalai.python/` - Personality for Python SDK development
@@ -25,6 +26,7 @@ Each worktree has its corresponding personality folder in the ./personalities di
 - `./personalities/formalai.lang/` - Personality for language design and implementation
 - `./personalities/zod.it/` - Personality for IT automation
 - `./personalities/formalai.generalist/` - Personality for general use cases
+- `./personalities/formalai.playground/` - Personality for experimentation and prototyping
 
 ### Personality Directory Structure
 Each personality folder must:
