@@ -44,14 +44,14 @@ class GitSandbox:
         This is a stub; actual implementation may require integration with CLI prompt logic.
         """
         # Example: simulate approval by passing a flag or using input redirection
-        # Replace 'git_procedure' with the actual script path if needed
-        script_path = Path(__file__).parent.parent.parent / "git_procedure.py"
+        # Use the correct path for git_procedure.py in the procedures directory
+        script_path = Path(__file__).parents[6] / "procedures" / "git_procedure.py"
         if not script_path.exists():
             raise FileNotFoundError(f"git_procedure.py not found at {script_path}")
         # Simulate user input: 'y' for approve, 'n' for decline
         user_input = b"y\n" if approve else b"n\n"
         proc = subprocess.run(
-            ["python", str(script_path), cmd],
+            ["python", str(script_path), "--repo", str(self.repo_dir), cmd],
             cwd=self.repo_dir,
             input=user_input,
             capture_output=True,

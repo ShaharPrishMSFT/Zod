@@ -7,7 +7,9 @@
 * 1. Survey existing repo layout & configs ... [[STEP-1 STATUS: DONE (2025-05-13)]]
 * 2. Build Git sandbox utility for isolated testing ... [[STEP-2 STATUS: DONE (2025-05-13)]]
 * 3. Implement approval flows and English→CLI mapping (status only) ... [[STEP-3 STATUS: DONE (2025-05-13)]]
-* 4. Write tests using sandbox util (approve / decline) ... \[\[STEP-4 STATUS: PENDING]]
+* 4. Plan and document 10 end-to-end git procedure tests ... [[STEP-4 STATUS: DONE (2025-05-13)]]
+* 5. Write tests using sandbox util (approve / decline) ... [[STEP-5 STATUS: DONE (2025-05-13)]]
+* 6. Refactor tests to invoke real agentic utility (git_procedure.py) instead of hardcoded mappings ... [[STEP-6 STATUS: PENDING]]
 
 **When a step is finished**
 
@@ -34,6 +36,8 @@
 1. Surveyed repo structure, key modules, tests, tooling, and quirks. (2025-05-13)
 2. Built Git sandbox utility for isolated testing and ensured .gitignore coverage. (2025-05-13)
 3. Implemented LLM-driven English→CLI mapping and sandboxed execution, removing approval prompt. (2025-05-13)
+4. Planned and documented 10 end-to-end git procedure tests for agentic tool validation. (2025-05-13)
+5. Wrote approve/decline tests using sandbox util and GitSandbox fixture. (2025-05-13)
 
 ### Technical Index (max 10 items)
 
@@ -60,11 +64,12 @@
 
 ### Current Step Bodies
 
-#### 4. Write tests using sandbox util (approve / decline)
+#### 6. Refactor tests to invoke real agentic utility
 
-* Positive: user approves, `git status` returns expected string.
-* Negative: user declines, command is **not** executed (assert no changes to repo).
-* All tests live under `tests/`, use `GitSandbox` fixture.
+* Update test helpers to call git_procedure.py as a subprocess, passing the English instruction.
+* Remove or bypass the INSTRUCTION_TO_COMMAND mapping.
+* Capture and assert on the real output from the agentic tool.
+* Ensure all tests validate the full agentic pipeline, not just sandbox logic.
 
 ---
 
