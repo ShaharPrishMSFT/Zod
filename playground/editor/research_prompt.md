@@ -349,7 +349,7 @@ rule personalize.greeting {
 }
 ```
 
-### Suggested Playground Technology  
+### Suggested Editor-Playground Technology  
 
 **Primary choice:** **Streamlit** (Python)  
 *Rationale:* ultra-quick local setup, no build pipeline, friendly widgets, easy integration with FormalAI-SDK, supports file drop-down, parse button, and JSON viewer.

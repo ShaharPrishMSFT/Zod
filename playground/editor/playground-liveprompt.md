@@ -54,7 +54,7 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
 
 ### Technical Index (max 10 items)
 
-1. [Playground Specification](playground/playground-spec.md)
+1. [Editor-Playground Specification](playground/editor/playground-spec.md)
 2. [Main README](personalities/formalai.playground/readme.md)
 3. [Grammar Definition](src/lang/grammar/grammar.peg)
 4. [Minimal .al Example](src/lang/examples/00_super_simple.al)
@@ -71,7 +71,7 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
 
 * Root folder        -> /src/lang/
 * Main executable    -> ail.exe
-* Tests              -> tests/
+* Tests              -> editor/
 * CI pipeline        -> All local
 
 ---

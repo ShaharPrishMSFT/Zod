@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-test.describe('Playground UI', () => {
+test.describe('Editor-Playground UI', () => {
   test('Editor initializes with minimal .al example', async ({ page }) => {
     // Capture browser console output
     page.on('console', msg => {

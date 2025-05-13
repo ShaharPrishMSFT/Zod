@@ -1,12 +1,12 @@
-# Playground UI Manual Test Checklist
+# Editor-Playground UI Manual Test Checklist
 
-This checklist covers all core UI features for the playground app. For each test, perform the action in the browser and verify the expected result. Record pass/fail and any notes.
+This checklist covers all core UI features for the editor-playground app. For each test, perform the action in the browser and verify the expected result. Record pass/fail and any notes.
 
 ---
 
 ## 1. Editor Initialization
 
-- [ ] **Test:** Load the playground app in the browser.
+- [ ] **Test:** Load the editor-playground app in the browser.
   - **Expected Result:** Editor is visible and initialized with a minimal `.al` example.
   - **Notes:** Editor supports multi-line editing, indentation, undo/redo, and find/replace.
 
