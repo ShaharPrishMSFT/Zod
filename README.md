@@ -17,6 +17,7 @@ This repository uses multiple worktrees for different components:
 - `worktrees/formalai.lang/` - Formal AI language implementation
 - `worktrees/zod.it/` - IT automation and tooling
 - `worktrees/formalai.generalist/` - General use cases and procedures
+- `worktrees/formalai.playground/` - Experimental features and prototypes
 
 Each worktree has its corresponding personality folder in the ./personalities directory:
 - `./personalities/formalai.python/` - Personality for Python SDK development
@@ -25,6 +26,7 @@ Each worktree has its corresponding personality folder in the ./personalities di
 - `./personalities/formalai.lang/` - Personality for language design and implementation
 - `./personalities/zod.it/` - Personality for IT automation
 - `./personalities/formalai.generalist/` - Personality for general use cases
+- `./personalities/formalai.playground/` - Personality for experimentation and prototyping
 
 ### Personality Directory Structure
 Each personality folder must:
@@ -74,9 +76,11 @@ Created with precision by Zod
   - `formalai.lang`
   - `zod.it`
 
-### Merge Workflow (when asked to merge to main)
-- Use `git branch --no-merged main` to check which branches need to be merged into main
-- When merging branches to main, no sync/pull/push operations are needed unless specifically requested
+### Merge Workflow
+- While on `main`, run `git branch --no-merged main` to list worktree branches that still need to be merged.
+- Merge each listed branch into **main** with `git merge <branch>`.
+- Push the updated main branch to the remote with `git push origin main`.
+- Do **not** pull, sync, or push anything else unless explicitly asked.
 
 ### Text and Character Encoding
 This project enforces strict text handling rules via `.gitattributes`:
