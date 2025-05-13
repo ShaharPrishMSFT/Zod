@@ -8,19 +8,20 @@ formal_decl_stripped: "context" WS_INLINE* ID? WS_INLINE* any_expr_in_formal
      | "function" WS_INLINE* ID WS_INLINE* any_expr_in_formal
      | "rule"     WS_INLINE* ID? WS_INLINE* any_expr_in_formal
 
-formal_decl_block: _NL WS_INLINE* formal_decl_stripped
+formal_decl_block: WS_INLINE* formal_decl_stripped
 
 comment_or_formal_stmt: (COMMENT_IN_BLOCKS | formal_stmt_line | _NL)
 
-formal_block_stripped: "{" comment_or_formal_stmt* _NL "}"
+formal_block_stripped: "{" _NL? (_NL WS_INLINE* formal_stmt)* _NL? "}"
 
 formal_block: _NL formal_block_stripped
 
-any_block_body_stripped: formal_block_stripped
-          | natural_block_stripped
+any_block_body_stripped: WS_INLINE* formal_block_stripped
+          | WS_INLINE* natural_block_stripped
 
 any_block_body: _NL any_block_body_stripped
-formal_stmt_line:  _NL formal_stmt
+formal_stmt_line:  _NL WS_INLINE* formal_stmt
+    | WS_INLINE* formal_stmt
 
 formal_stmt: if_stmt
     | when_stmt
@@ -28,10 +29,10 @@ formal_stmt: if_stmt
     | action_stmt
     | nop_stmt
 
-if_stmt: "if" any_expr_in_formal "then" any_expr_in_formal _NL? ("else" any_expr_in_formal)?
+if_stmt: "if" any_expr_in_formal "then" (any_expr_in_formal | formal_block_stripped) _NL? ("else" (any_expr_in_formal | formal_block_stripped))?
 when_stmt: "when" any_expr_in_formal "then" any_expr_in_formal
-input_stmt: "input" any_expr_in_formal
-action_stmt: "action" any_expr_in_formal
+input_stmt: "input" WS_INLINE* natural_inline
+action_stmt: "action" (any_expr_in_formal | formal_block_stripped)+
 nop_stmt: "nop"
 
 ##########################
@@ -51,8 +52,8 @@ NAT_END: "--end"
 # Mixed/embedded         #
 ##########################
 
-formal_expr_in_natural: "{{" _NL? formal_stmt _NL? "}}"
-any_expr_in_formal: (formal_stmt | any_block_body | natural_inline)
+formal_expr_in_natural: "{{" _NL? WS_INLINE* formal_stmt _NL? "}}"
+any_expr_in_formal: (natural_inline | formal_stmt | any_block_body)
 
 ##########################
 # Primitives             #
@@ -63,8 +64,7 @@ NAME: /[A-Za-z][A-Za-z0-9_]*/
 
 natural_content: (formal_expr_in_natural | TEXT_CHAR | WS | _NL)*
 
-WS: /[ \t]+/
-TEXT_CHAR: /[^\[\]{}\n \t]/   // any char except brackets, braces, newline, or space/tab
+TEXT_CHAR: /[^\[\]{}\n]/   // any char except brackets, braces, or newline
 
 ##########################
 # Tokens & helpers       #
@@ -75,5 +75,6 @@ COMMENT: /[ \t]*#[^\n]*/
 COMMENT_IN_BLOCKS: _NL COMMENT
 
 %import common.WS_INLINE
+%import common.WS
 %ignore COMMENT
 %ignore COMMENT_IN_BLOCKS

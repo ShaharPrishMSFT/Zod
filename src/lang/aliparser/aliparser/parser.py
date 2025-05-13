@@ -226,7 +226,7 @@ class AgentLinguaParser:
             text = ""
             for sub in tree.children:
                 if isinstance(sub, Token):
-                    text += sub.value
+                    text += sub.value  # Preserve all token values, including whitespace and newlines
                 elif isinstance(sub, str):
                     text += sub
             print("DEBUG natural_content joined text:", repr(text))
