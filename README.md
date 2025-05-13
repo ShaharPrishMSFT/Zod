@@ -174,3 +174,7 @@ This project enforces strict text handling rules via `.gitattributes`:
 For detailed installation instructions, refer to our [Installation Guide](./docs/installation/readme.md). The guide covers:
 - Setting up Ollama for local LLM support
 - Installing AutoGen (AutoFac) with Ollama integration
+
+## TODO
+
+For TODOs related to the formalai.lang personality, see [personalities/formalai.lang/ToDo.md](personalities/formalai.lang/ToDo.md).
