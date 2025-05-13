@@ -68,9 +68,12 @@ Created with precision by Zod
 ## Git Configuration
 
 ### Branch Structure
-- The main development branch is `main` 
-- Each worktree operates on its own feature branch matching its name:
+- Active development happens on the `zod.orchestrator` branch
+- The `main` branch serves as the integration target for all changes
+- Each worktree operates on its own feature branch:
   - `formalai.configuration`
+  - `formalai.playground`
+  - `formalai.generalist`
   - `formalai.python`
   - `formalai.python.infra`
   - `formalai.lang`
