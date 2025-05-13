@@ -24,3 +24,14 @@ venv/
 dist/
 build/
 *.egg-info/
+
+# Playwright test output
+test-results/
+
+# Node.js
+node_modules/
+
+# OS/Editor files
+.DS_Store
+Thumbs.db
+*.log

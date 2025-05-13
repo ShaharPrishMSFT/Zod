@@ -2,6 +2,7 @@
 
 <!--- COMPLETED-STEP SUMMARIES (append most salient take-aways, pitfalls, key decisions) --->
 
+- UI test plan established: All core features (Open, Save, Copy, editor, status messages) have clear test cases and verification methods for manual or automated testing.
 - Minimal local implementation can be achieved as a static HTML/JS app using CodeMirror (preferred for MVP) and a JS PEG parser, with all dependencies loaded via CDN.
 - Main features: code editor with syntax highlighting, real-time/on-demand parsing, inline error feedback, file open/save via browser, output panel for AST/errors, collapsible log/debug area.
 - No build step or backend required; use browser APIs for file I/O.
@@ -27,8 +28,8 @@
 * 1. Reason about minimal local implementation ... [[STEP-1 STATUS: DONE (2025-05-13)]]
 * 2. Integrate syntax-highlighting editor ... [[STEP-2 STATUS: DONE (2025-05-13)]]
 * 3. Implement file load/save functionality ... [[STEP-3 STATUS: DONE (2025-05-13)]]
-* 4. Plan for building tests to test the UI to see that it's working ... [[STEP-4 STATUS: PENDING]]
-* 5. Implement the tests to the current functionality ... [[STEP-5 STATUS: PENDING]]
+* 4. Plan for building tests to test the UI to see that it's working ... [[STEP-4 STATUS: DONE (2025-05-13)]]
+* 5. Implement the tests to the current functionality ... [[STEP-5 STATUS: DONE (2025-05-13)]]
 * 6. Integrate real-time parser and validation ... [[STEP-6 STATUS: PENDING]]
 * 7. Build output and feedback panel ... [[STEP-7 STATUS: PENDING]]
 * 8. Add logging and debug area ... [[STEP-8 STATUS: PENDING]]
@@ -76,20 +77,6 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
 ---
 
 ### Current Step Bodies
-
-#### 4. Plan for building tests to test the UI to see that it's working
-
-* Identify which UI features require testing (Open, Save, Copy, editor initialization, status messages).
-* Decide on the testing approach: automated browser tests (e.g., Playwright, Cypress) or manual test scripts/checklists.
-* Specify test cases for each feature (e.g., file loads into editor, save triggers download, copy updates clipboard, status messages appear).
-* Determine how to verify results (file content, clipboard content, UI updates).
-
-#### 5. Implement the tests to the current functionality
-
-* Set up the chosen test framework or manual test checklist.
-* Write and organize tests for each UI feature as planned in step 4.
-* Run the tests and document results.
-* Adjust implementation or tests as needed based on failures or gaps.
 
 #### 6. Integrate real-time parser and validation
 
