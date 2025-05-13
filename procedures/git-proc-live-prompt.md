@@ -4,7 +4,7 @@
 
 ## Progress Tracker
 
-* 1. Survey existing repo layout & configs ... \[\[STEP-1 STATUS: PENDING]]
+* 1. Survey existing repo layout & configs ... [[STEP-1 STATUS: DONE (2025-05-13)]]
 * 2. Build Git sandbox utility for isolated testing ... \[\[STEP-2 STATUS: PENDING]]
 * 3. Implement approval flows and English→CLI mapping (status only) ... \[\[STEP-3 STATUS: PENDING]]
 * 4. Write tests using sandbox util (approve / decline) ... \[\[STEP-4 STATUS: PENDING]]
@@ -27,6 +27,10 @@
 5. Iterate until all steps are `DONE`.
 
 ---
+
+### COMPLETED-STEP SUMMARIES
+
+1. Surveyed repo structure, key modules, tests, tooling, and quirks. (2025-05-13)
 
 ### Technical Index (max 10 items)
 
@@ -52,13 +56,6 @@
 ---
 
 ### Current Step Bodies
-
-#### 1. Survey existing repo layout & configs
-
-* Enumerate folders, key modules, and existing tests.
-* Note conventional locations (e.g., `src/`, `tests/`, `procedures/` if present).
-* Identify any tooling already configured (pre‑commit, CI, etc.).
-* Record pitfalls or quirks (e.g., unusual virtual‑env setup).
 
 #### 2. Build Git sandbox utility for isolated testing
 
