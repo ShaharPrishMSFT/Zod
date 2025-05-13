@@ -6,6 +6,7 @@
 
 1. Project exists in a git worktree with Python 3.13/pip installed; minimal additional setup needed.
 2. Grammar defined in PEG format, follows existing grammar.peg specification; project structure aligns with Python package standards.
+3. Implemented core lexical elements: lexer with comment/newline tokens, line tracking, initial tests added.
 
 <!--- (Old step bodies are copied verbatim to `prompt.archive.md` by the agent) --->
 
@@ -15,7 +16,7 @@
 
 * 1. Bootstrap environment & prerequisites ... \[\[STEP-1 STATUS: DONE (2025-05-13)]]
 * 2. Draft minimal spec & directory layout ... \[\[STEP-2 STATUS: DONE (2025-05-13)]]
-* 3. Implement Core Lexical Elements ... \[\[STEP-3 STATUS: PENDING]]
+* 3. Implement Core Lexical Elements ... \[\[STEP-3 STATUS: DONE (2025-05-13)]]
 * 4. Implement Context Parser ... \[\[STEP-4 STATUS: PENDING]]
 * 5. Expand Parser with Input and Rule Support ... \[\[STEP-5 STATUS: PENDING]]
 * 6. Parser Validation and Enhancement ... \[\[STEP-6 STATUS: PENDING]]
