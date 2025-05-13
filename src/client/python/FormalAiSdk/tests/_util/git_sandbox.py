@@ -48,6 +48,9 @@ class GitSandbox:
         self.run_git_command(["git", "init"], check=True)
         # Create and switch to 'main' branch for test consistency
         self.run_git_command(["git", "checkout", "-b", "main"], check=True)
+        # Add initial file and commit so the branch exists
+        self.add_sample_code()
+        self.commit("Initial commit")
         return self
 
     def add_sample_code(self, filename="hello.py", content='print("Hello from sandbox!")\n'):

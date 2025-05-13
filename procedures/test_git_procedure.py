@@ -86,6 +86,23 @@ def run_tool_and_command(sandbox, instruction, print_output=False):
         command = INSTRUCTION_TO_COMMAND[instruction]
         print(f"MOCK MODE: Using command '{command}' for instruction '{instruction}'")
         print(f"DEBUG: command to execute = {command!r}")
+        # Actually execute the mapped command(s) in the sandbox
+        output = ""
+        for cmd in command.split("&&"):
+            cmd = cmd.strip()
+            proc = sandbox.run_git_command(
+                cmd,
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            if print_output and proc is not None:
+                out = ""
+                if hasattr(proc, "stdout") and proc.stdout:
+                    out += proc.stdout.decode() if isinstance(proc.stdout, bytes) else str(proc.stdout)
+                if hasattr(proc, "stderr") and proc.stderr:
+                    out += proc.stderr.decode() if isinstance(proc.stderr, bytes) else str(proc.stderr)
+                output += out
     else:
         # Call the real agentic utility as a subprocess
         proc = subprocess.run(
@@ -101,25 +118,6 @@ def run_tool_and_command(sandbox, instruction, print_output=False):
             check=True
         )
         command = proc.stdout.strip()
-    import shlex
-    # Support multi-command (e.g., checkout + merge)
-    if use_mock:
-        for cmd in command.split("&&"):
-            cmd = cmd.strip()
-            proc = sandbox.run_git_command(
-                cmd,
-                capture_output=True,
-                text=True,
-                check=False
-            )
-            if print_output and proc is not None:
-                out = ""
-                if hasattr(proc, "stdout") and proc.stdout:
-                    out += proc.stdout.decode() if isinstance(proc.stdout, bytes) else str(proc.stdout)
-                if hasattr(proc, "stderr") and proc.stderr:
-                    out += proc.stderr.decode() if isinstance(proc.stderr, bytes) else str(proc.stderr)
-                output += out
-    else:
         # In agentic mode, the subprocess call above already runs the full command via git_procedure.py
         if print_output and command:
             output += command
