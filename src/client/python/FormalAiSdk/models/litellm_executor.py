@@ -27,25 +27,49 @@ class LiteLLMExecutor(ModelExecutor):
     def __init__(self, provider: str, model: str, api_key: Optional[str] = None):
         """
         Initialize the LiteLLM executor.
-        
+
         Args:
-            provider: The LLM provider to use ("openai" or "ollama")
-            model: The model name to use
+            provider: The LLM provider to use ("openai", "azure", or "ollama")
+            model: The model name to use (for Azure, this is the deployment name)
             api_key: Optional API key for cloud providers
-            
+
         Example:
             # For OpenAI
             executor = LiteLLMExecutor("openai", "gpt-3.5-turbo", "sk-...")
-            
+
+            # For Azure OpenAI
+            executor = LiteLLMExecutor("azure", "gpt-4.1", "<azure-key>")
+
             # For Ollama
             executor = LiteLLMExecutor("ollama", "llama2")
         """
         self.provider = provider.lower()
-        self.model = f"{provider}/{model}"  # Format expected by litellm
-        
-        # Set API key if provided
-        if api_key:
-            litellm.api_key = api_key
+
+        # Azure OpenAI support
+        if self.provider == "azure" or (
+            provider is None and (
+                "AZURE_API_KEY" in os.environ and
+                "AZURE_API_BASE" in os.environ and
+                "AZURE_DEPLOYMENT_NAME" in os.environ
+            )
+        ):
+            import os
+            azure_key = api_key or os.environ.get("AZURE_API_KEY")
+            azure_base = os.environ.get("AZURE_API_BASE")
+            azure_version = os.environ.get("AZURE_API_VERSION", "2025-01-01-preview")
+            deployment = model or os.environ.get("AZURE_DEPLOYMENT_NAME")
+            self.model = f"azure/{deployment}"
+            self.litellm_kwargs = {
+                "api_key": azure_key,
+                "api_base": azure_base,
+                "api_version": azure_version,
+            }
+        else:
+            # OpenAI or Ollama
+            self.model = f"{provider}/{model}"
+            self.litellm_kwargs = {}
+            if api_key:
+                litellm.api_key = api_key
     
     def _convert_role(self, role: Role) -> str:
         """Convert our Role enum to LiteLLM role string."""
@@ -102,7 +126,8 @@ class LiteLLMExecutor(ModelExecutor):
             # Execute the model
             response = litellm.completion(
                 model=self.model,
-                messages=messages
+                messages=messages,
+                **self.litellm_kwargs
             )
             
             # Extract the response content

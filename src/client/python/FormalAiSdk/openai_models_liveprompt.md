@@ -8,7 +8,7 @@
 ## Progress Tracker
 
 * 1. Review LiteLLMExecutor OpenAI support and dependencies ... [[STEP-1 STATUS: DONE (2025-05-13)]]
-* 2. Ensure OpenAI model configuration and credentials are handled via LiteLLM ... [[STEP-2 STATUS: PENDING]]
+* 2. Ensure OpenAI model configuration and credentials are handled via LiteLLM ... [[STEP-2 STATUS: DONE (2025-05-13)]]
 * 3. Update and expand tests for OpenAI usage through LiteLLM ... [[STEP-3 STATUS: PENDING]]
 * 4. Document OpenAI model usage via LiteLLM in SDK docs and examples ... [[STEP-4 STATUS: PENDING]]
 * 5. Review CI pipeline for OpenAI/LiteLLM coverage ... [[STEP-5 STATUS: PENDING]]
@@ -58,12 +58,6 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
 ---
 
 ### Current Step Bodies
-
-#### 2. Ensure OpenAI model configuration and credentials are handled via LiteLLM
-
-* Document how to configure OpenAI models using LiteLLM.
-* Ensure API keys and parameters are loaded securely (env/config).
-* Update `.gitignore` and `.editorconfig` if needed.
 
 #### 3. Update and expand tests for OpenAI usage through LiteLLM
 
