@@ -4,11 +4,11 @@
 # Formal section         #
 ##########################
 
-formal_decl_stripped: "context" ID? any_expr_in_formal
-     | "function" ID any_expr_in_formal
-     | "rule"     ID? any_expr_in_formal
+formal_decl_stripped: "context" WS_INLINE* ID? WS_INLINE* any_expr_in_formal
+     | "function" WS_INLINE* ID WS_INLINE* any_expr_in_formal
+     | "rule"     WS_INLINE* ID? WS_INLINE* any_expr_in_formal
 
-formal_decl_block: _NL formal_decl_stripped
+formal_decl_block: _NL WS_INLINE* formal_decl_stripped
 
 comment_or_formal_stmt: (COMMENT_IN_BLOCKS | formal_stmt_line | _NL)
 
@@ -61,9 +61,10 @@ any_expr_in_formal: (formal_stmt | any_block_body | natural_inline)
 ID: NAME ("." NAME)*
 NAME: /[A-Za-z][A-Za-z0-9_]*/
 
-natural_content: (formal_expr_in_natural | TEXT_CHAR | _NL)*
+natural_content: (formal_expr_in_natural | TEXT_CHAR | WS | _NL)*
 
-TEXT_CHAR: /[^\[\]{}\n]/   // any char except brackets, braces, or newline
+WS: /[ \t]+/
+TEXT_CHAR: /[^\[\]{}\n \t]/   // any char except brackets, braces, newline, or space/tab
 
 ##########################
 # Tokens & helpers       #
@@ -74,6 +75,5 @@ COMMENT: /[ \t]*#[^\n]*/
 COMMENT_IN_BLOCKS: _NL COMMENT
 
 %import common.WS_INLINE
-%ignore WS_INLINE
 %ignore COMMENT
 %ignore COMMENT_IN_BLOCKS

@@ -8,6 +8,7 @@
 2. Grammar defined in PEG format, follows existing grammar.peg specification; project structure aligns with Python package standards.
 3. Implemented core lexical elements: lexer with comment/newline tokens, line tracking, initial tests added.
 3. Refactored to Lark-based parser: loads PEG grammar, exposes parse tree API, removes legacy lexer/parser.
+4. Implemented core lexical elements: base parser class, comment/newline tokenization, line tracking, and initial test infrastructure.
 
 <!--- (Old step bodies are copied verbatim to `prompt.archive.md` by the agent) --->
 
@@ -66,24 +67,6 @@ When a step is finished, replace its `PENDING` with `DONE (yyyy-mm-dd)` and copy
 ---
 
 ### Current Step Bodies
-
-#### 4. Implement Core Lexical Elements
-* Create base Parser class fundamentals:
-  - Token stream initialization
-  - Basic error recording
-  - Position tracking (line/column)
-* Implement comment handling:
-  - COMMENT token for "# ..." style comments
-  - COMMENT_IN_BLOCKS for multi-line comments
-  - Comment preservation in AST
-* Add newline management:
-  - _NL token recognition
-  - Handling of \r\n and \n
-  - Proper line counting
-* Create initial test infrastructure:
-  - Test helpers and fixtures
-  - Comment parsing tests
-  - Newline handling tests
 
 #### 5. Implement Context Parser
 * Add context block parsing:
