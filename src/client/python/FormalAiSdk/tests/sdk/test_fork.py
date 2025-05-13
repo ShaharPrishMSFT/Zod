@@ -88,7 +88,7 @@ def test_system_message_handling(actor, test_session):
     # Verify that system message was included
     assert len(messages_seen) == 3  # system + user + fork message
     assert messages_seen[0].content == "You are a helpful assistant"
-    assert messages_seen[0].role == Role.AGENT  # system messages are treated as AGENT role
+    assert messages_seen[0].role == Role.SYSTEM  # system messages retain SYSTEM role
     assert messages_seen[1].content == "Hello"
     assert messages_seen[2].content == "Test message"
 
@@ -115,7 +115,7 @@ def test_fork_conversation_content(actor, test_session):
     
     # Verify exact message content and role mapping
     assert last_conversation.messages[0].content == "System context"
-    assert last_conversation.messages[0].role == Role.AGENT
+    assert last_conversation.messages[0].role == Role.SYSTEM
     assert last_conversation.messages[1].content == "User input"
     assert last_conversation.messages[1].role == Role.CLIENT
     assert last_conversation.messages[2].content == "Assistant reply"

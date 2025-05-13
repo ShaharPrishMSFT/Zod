@@ -3,17 +3,22 @@ import subprocess
 from pathlib import Path
 
 # Import GitSandbox from the correct path
-sys.path.append(str(Path(__file__).parent / "../client/python/FormalAiSdk/tests/_util"))
+GIT_SANDBOX_PATH = (Path(__file__).parent / "../src/client/python/FormalAiSdk/tests/_util").resolve()
+sys.path.insert(0, str(GIT_SANDBOX_PATH))
+import tempfile
 from git_sandbox import GitSandbox
 
 # Import FormalAI SDK
-sys.path.append(str(Path(__file__).parent / "../client/python"))
+SDK_PATH = (Path(__file__).parent / "../src/client/python").resolve()
+sys.path.insert(0, str(SDK_PATH))
 from FormalAiSdk.models.litellm_executor import LiteLLMExecutor
 from FormalAiSdk.sdk.session import ModelSession
 
+import argparse
+
 def get_git_command_from_llm(english_instruction):
     # Initialize LLM executor and session
-    executor = LiteLLMExecutor("ollama", "llama2")
+    executor = LiteLLMExecutor("ollama", "mistral")
     session = ModelSession("user", executor)
     # Add system prompt for CLI mapping
     session.add_response("system", (
@@ -32,15 +37,20 @@ def get_git_command_from_llm(english_instruction):
     return None
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python git_procedure.py <english command>")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="LLM-powered English-to-git CLI agent")
+    parser.add_argument("--print-only", action="store_true", help="Only print the mapped git command, do not execute it")
+    parser.add_argument("instruction", nargs="+", help="English instruction to map to git command")
+    args = parser.parse_args()
 
-    english_instruction = " ".join(sys.argv[1:]).strip()
+    english_instruction = " ".join(args.instruction).strip()
     git_cmd_str = get_git_command_from_llm(english_instruction)
     if not git_cmd_str:
         print("LLM did not return a command.")
         sys.exit(1)
+
+    if args.print_only:
+        print(git_cmd_str)
+        sys.exit(0)
 
     print(f"LLM mapped command: {git_cmd_str}")
 
@@ -48,23 +58,25 @@ def main():
     import shlex
     git_cmd = shlex.split(git_cmd_str)
 
-    # Set up or use existing sandbox
-    sandbox = GitSandbox().setup()
-    # Ensure at least one commit exists for git status to work
-    sandbox.add_sample_code().commit()
+    # Set up or use existing sandbox in a temp directory
+    with tempfile.TemporaryDirectory() as tmpdir:
+        sandbox = GitSandbox(root_dir=tmpdir).setup()
+        # Ensure at least one commit exists for git status to work
+        sandbox.add_sample_code().commit()
 
-    # Run the git command in the sandbox repo, streaming output live
-    proc = subprocess.Popen(
-        git_cmd,
-        cwd=sandbox.repo_dir,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        bufsize=1,
-    )
-    for line in proc.stdout:
-        print(line, end="")
-    proc.wait()
+        # Run the git command in the sandbox repo, streaming output live
+        proc = subprocess.Popen(
+            git_cmd,
+            cwd=sandbox.repo_dir,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+        )
+        for line in proc.stdout:
+            print(line, end="")
+        proc.wait()
+
 
 if __name__ == "__main__":
     main()
