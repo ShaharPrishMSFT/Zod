@@ -12,13 +12,8 @@ class BaseInterpreter(Transformer):
     Override methods in a subclass to implement semantics.
     """
 
-    def __formal_block_star_2(self, children):
-        # Walk children for rule: __formal_block_star_2
-        return [self._transform_child(child) for child in children]
-
-
-    def __natural_block_star_1(self, children):
-        # Walk children for rule: __natural_block_star_1
+    def __natural_inner_star_2(self, children):
+        # Walk children for rule: __natural_inner_star_2
         return [self._transform_child(child) for child in children]
 
 
@@ -27,23 +22,13 @@ class BaseInterpreter(Transformer):
         return [self._transform_child(child) for child in children]
 
 
-    def action_body(self, children):
-        # Walk children for rule: action_body
+    def __stmt_list_star_1(self, children):
+        # Walk children for rule: __stmt_list_star_1
         return [self._transform_child(child) for child in children]
 
 
-    def action_stmt(self, children):
-        # Walk children for rule: action_stmt
-        return [self._transform_child(child) for child in children]
-
-
-    def block_expr(self, children):
-        # Walk children for rule: block_expr
-        return [self._transform_child(child) for child in children]
-
-
-    def body(self, children):
-        # Walk children for rule: body
+    def context_body(self, children):
+        # Walk children for rule: context_body
         return [self._transform_child(child) for child in children]
 
 
@@ -52,13 +37,13 @@ class BaseInterpreter(Transformer):
         return [self._transform_child(child) for child in children]
 
 
-    def decl(self, children):
-        # Walk children for rule: decl
+    def double_expr(self, children):
+        # Walk children for rule: double_expr
         return [self._transform_child(child) for child in children]
 
 
-    def formal_block(self, children):
-        # Walk children for rule: formal_block
+    def else_part(self, children):
+        # Walk children for rule: else_part
         return [self._transform_child(child) for child in children]
 
 
@@ -67,8 +52,8 @@ class BaseInterpreter(Transformer):
         return [self._transform_child(child) for child in children]
 
 
-    def id_expr(self, children):
-        # Walk children for rule: id_expr
+    def if_condition(self, children):
+        # Walk children for rule: if_condition
         return [self._transform_child(child) for child in children]
 
 
@@ -77,23 +62,18 @@ class BaseInterpreter(Transformer):
         return [self._transform_child(child) for child in children]
 
 
-    def inline_expr(self, children):
-        # Walk children for rule: inline_expr
+    def inline_action(self, children):
+        # Walk children for rule: inline_action
         return [self._transform_child(child) for child in children]
 
 
-    def input_body(self, children):
-        # Walk children for rule: input_body
+    def inline_input(self, children):
+        # Walk children for rule: inline_input
         return [self._transform_child(child) for child in children]
 
 
-    def input_stmt(self, children):
-        # Walk children for rule: input_stmt
-        return [self._transform_child(child) for child in children]
-
-
-    def nat_line(self, children):
-        # Walk children for rule: nat_line
+    def natural_action(self, children):
+        # Walk children for rule: natural_action
         return [self._transform_child(child) for child in children]
 
 
@@ -102,13 +82,8 @@ class BaseInterpreter(Transformer):
         return [self._transform_child(child) for child in children]
 
 
-    def natural_expr(self, children):
-        # Walk children for rule: natural_expr
-        return [self._transform_child(child) for child in children]
-
-
-    def nop_stmt(self, children):
-        # Walk children for rule: nop_stmt
+    def natural_inner(self, children):
+        # Walk children for rule: natural_inner
         return [self._transform_child(child) for child in children]
 
 
@@ -124,6 +99,16 @@ class BaseInterpreter(Transformer):
 
     def stmt(self, children):
         # Walk children for rule: stmt
+        return [self._transform_child(child) for child in children]
+
+
+    def stmt_list(self, children):
+        # Walk children for rule: stmt_list
+        return [self._transform_child(child) for child in children]
+
+
+    def then_part(self, children):
+        # Walk children for rule: then_part
         return [self._transform_child(child) for child in children]
 
 

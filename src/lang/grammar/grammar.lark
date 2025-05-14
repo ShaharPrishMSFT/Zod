@@ -1,7 +1,7 @@
 %ignore /#.*/                  # ignore comments
 %ignore /\s+/                  # ignore whitespace (spaces, tabs; keep newlines for NATURAL_TEXT)
 
-/* Token definitions */
+# Token definitions
 BEGIN: "--begin"
 END: "--end"
 DOPEN: "{{"
@@ -23,7 +23,7 @@ DOTTED_NAME: /[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*/
 BRACKET_CONTENT: /\[[^\]]+\]/
 COND_TEXT: /[^\]]+/
 
-/* Grammar rules */
+# Grammar rules
 start: (context_decl | function_decl | rule_decl)*
 
 context_decl: CONTEXT DOTTED_NAME? context_body
@@ -61,4 +61,4 @@ natural_inner: (NATURAL_TEXT | double_expr)*
 
 double_expr: DOPEN stmt_list DCLOSE
 
-NATURAL_TEXT: /([^{}]|\{(?!\{)|\}(?!\}))+/ 
+NATURAL_TEXT: /([^{}]|\{(?!\{)|\}(?!\}))+/
