@@ -1,71 +1,64 @@
-// AGENT: DO NOT CHANGE THIS FILE WITHOUT ASKING PERMISSION
-// ────────── TOKENS ──────────
-BEGIN          : "--begin"
-END            : "--end"
-COMMENT         : /[ \t]*#[^\n]*/                // line‑comment (may start with spaces/tabs)
-INLINE_TEXT     : "[" /[^\]\n]*/ "]"             // e.g.  action [Some text]
-EMBED_EXPR      : "{{" /[^}]*/ "}}"              // embedded formal expr inside natural text
-ID              : /[A-Za-z_][A-Za-z0-9_.]*/      // dotted or simple identifier
-// NAT_TEXT_LINE   : /(?!--end\b)(?!{{).+/         // any natural line not starting '--end' or '{{'
-# NAT_TEXT_LINE   : /(?m)^[ \t]*(?!\-\-(?:begin|end)\b)(?!{{).+[^\n]/
-# TODO: The (?m) flag causes Python re.PatternError in Lark. This is a temporary workaround.
-# NAT_TEXT_LINE   : /^[ \t]*(?!\-\-(?:begin|end)\b)(?!{{).+[^\n]/
-# TODO: Temporary workaround: removed ^ anchor to allow matching at any line position.
-NAT_TEXT_LINE   : /[ \t]*(?!\-\-(?:begin|end)\b)(?!{{).+[^\n]/
-_NL             : /(\r?\n)+/
-_WS             : /[ \t]+/
+%ignore /#.*/                  # ignore comments
+%ignore /\s+/                  # ignore whitespace (spaces, tabs; keep newlines for NATURAL_TEXT)
 
-%ignore _WS
-%ignore COMMENT
-    # `
-// ────────── ENTRY ──────────
-start           : (_NL | decl)*
+/* Token definitions */
+BEGIN: "--begin"
+END: "--end"
+DOPEN: "{{"
+DCLOSE: "}}"
+LBRACE: "{"
+RBRACE: "}"
 
-decl            : context_decl
-                | function_decl
-                | rule_decl
+RULE: "rule"
+FUNCTION: "function"
+CONTEXT: "context"
+WHEN: "when"
+IF: "if"
+THEN: "then"
+ELSE: "else"
+ACTION: "action"
+INPUT: "input"
 
-// ────────── TOP‑LEVEL DECLS ──────────
-context_decl    : "context" ID? body
-function_decl   : "function" ID body
-rule_decl       : "rule" ID? body
+DOTTED_NAME: /[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*/
+BRACKET_CONTENT: /\[[^\]]+\]/
+COND_TEXT: /[^\]]+/
 
-// ────────── BODIES ──────────
-body            : natural_block
-                | formal_block
+/* Grammar rules */
+start: (context_decl | function_decl | rule_decl)*
 
-natural_block   : _NL? BEGIN _NL (nat_line _NL)* END _NL?
-nat_line        : NAT_TEXT_LINE
-                | EMBED_EXPR
+context_decl: CONTEXT DOTTED_NAME? context_body
+context_body: LBRACE stmt_list RBRACE
+             | natural_block
 
-formal_block    : _NL? "{" (_NL | stmt)* "}" _NL?
+function_decl: FUNCTION DOTTED_NAME LBRACE stmt_list RBRACE
 
-// ────────── STATEMENTS ──────────
-stmt            : _NL
-                | action_stmt
-                | input_stmt
-                | if_stmt
-                | when_stmt
-                | nop_stmt
+rule_decl: RULE DOTTED_NAME? LBRACE stmt_list RBRACE
 
-action_stmt     : "action" action_body
-input_stmt      : "input"  input_body
-nop_stmt        : "nop"
+stmt_list: stmt*
 
-action_body     : INLINE_TEXT
-                | natural_block
-                | formal_block
+stmt: inline_action
+    | inline_input
+    | natural_action
+    | if_stmt
+    | when_stmt
 
-input_body      : INLINE_TEXT
-                | natural_block
-                | formal_block
+inline_action: ACTION BRACKET_CONTENT
+inline_input: INPUT BRACKET_CONTENT
 
-// ────────── CONTROL FLOW ──────────
-if_stmt         : "if" expr "then" formal_block ["else" formal_block]
-when_stmt       : "when" expr "then" formal_block
+natural_action: ACTION natural_block
 
-// ────────── EXPRESSIONS (MVP) ──────────
-expr            : INLINE_TEXT     -> inline_expr
-                | natural_block   -> natural_expr
-                | formal_block    -> block_expr
-                | ID              -> id_expr
+if_stmt: IF if_condition then_part else_part?
+if_condition: "[" COND_TEXT "]"
+            | natural_block
+            | LBRACE stmt_list RBRACE
+then_part: THEN LBRACE stmt_list RBRACE
+else_part: ELSE LBRACE stmt_list RBRACE
+
+when_stmt: WHEN if_condition then_part else_part?
+
+natural_block: BEGIN natural_inner END
+natural_inner: (NATURAL_TEXT | double_expr)*
+
+double_expr: DOPEN stmt_list DCLOSE
+
+NATURAL_TEXT: /([^{}]|\{(?!\{)|\}(?!\}))+/ 

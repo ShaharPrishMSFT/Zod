@@ -2,13 +2,18 @@
 context
 {
     action
+
+    
     --begin
     Cart validation process:
-    {{ if
-        --begin
-        Checking cart state:
-        {{ action [Cart status checked] }}
-        --end
+    {{
+        if
+        {
+            --begin
+            Checking cart state:
+            {{ action [Cart status checked] }}
+            --end
+        }
         then
         {
             action [Cart is valid]

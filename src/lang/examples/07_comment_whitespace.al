@@ -11,6 +11,4 @@ function test.comments
 # Current supported forms:
 function example.supported
 {
-    # 1. Inline natural blocks   
-    
 }
