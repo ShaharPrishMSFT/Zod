@@ -13,7 +13,7 @@ _WS             : /[ \t]+/
 
 %ignore _WS
 %ignore COMMENT
-
+    `
 // ────────── ENTRY ──────────
 start           : (_NL | decl)*
 

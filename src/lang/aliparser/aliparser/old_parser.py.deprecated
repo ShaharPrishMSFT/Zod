@@ -1,3 +1,6 @@
+
+## DEPRECATED!!
+
 from pathlib import Path
 from lark import Lark, Tree, UnexpectedInput, UnexpectedToken, Token
 from typing import Optional, Union, List, Any
@@ -107,9 +110,17 @@ class AgentLinguaParser:
         Convert Lark parse tree to a list of AST nodes.
         Only handles context blocks and natural blocks for now.
         """
+        # Handle Token nodes directly
+        if isinstance(tree, Token):
+            # Only wrap text-like tokens as TextNode
+            if tree.type in ("TEXT_CHAR", "NAT_TEXT_LINE", "nat_line", "STRING", "ID"):
+                return TextNode(str(tree))
+            # Otherwise, ignore or return None
+            return None
+
         print("DEBUG _tree_to_ast visiting:", getattr(tree, "data", None))
         nodes = []
-        if tree.data == "start":
+        if tree.data == "start" or tree.data == "decl":
             for child in tree.children:
                 node = self._tree_to_ast(child)
                 if node:
@@ -117,43 +128,28 @@ class AgentLinguaParser:
                         nodes.extend(node)
                     else:
                         nodes.append(node)
-        elif tree.data == "formal_decl_block":
-            # Find context declaration
-            for child in tree.children:
-                if hasattr(child, "data") and child.data == "formal_decl_stripped":
-                    # child: formal_decl_stripped
-                    name = None
-                    body = None
-                    print("DEBUG formal_decl_stripped children:", [(type(sub), repr(sub)) for sub in child.children])
-                    for sub in child.children:
-                        if isinstance(sub, Token) and sub.type == "ID":
-                            name = str(sub)
-                        elif hasattr(sub, "data"):
-                            print("DEBUG recursing into:", sub.data)
-                            result = self._tree_to_ast(sub)
-                            # If result is a list, search for a NaturalBlockNode
-                            if isinstance(result, list):
-                                def find_nb(lst):
-                                    for n in lst:
-                                        if isinstance(n, NaturalBlockNode):
-                                            return n
-                                        elif isinstance(n, list):
-                                            found = find_nb(n)
-                                            if found:
-                                                return found
-                                    return None
-                                nb = find_nb(result)
-                                if nb is not None:
-                                    body = nb
-                                else:
-                                    body = result
-                            elif isinstance(result, NaturalBlockNode):
-                                body = result
-                            else:
-                                body = result
-                    if body is None:
-                        body = NaturalBlockNode([])
-                    return ContextNode(name, body)
+            return nodes
+        elif tree.data == "context_decl":
+            # context_decl: ID body
+            name = None
+            body = None
+            for sub in tree.children:
+                if isinstance(sub, Token) and sub.type == "ID":
+                    name = str(sub)
+                elif hasattr(sub, "data") and sub.data == "body":
+                    body = self._tree_to_ast(sub)
+            if body is None:
+                body = NaturalBlockNode([])
+            node = ContextNode(name, body)
+            print("DEBUG returning ContextNode:", node, "name:", name, "body:", body)
+            return node
+        elif tree.data == "body":
+            # body: natural_block | ...
+            for sub in tree.children:
+                result = self._tree_to_ast(sub)
+                if result:
+                    return result
+            return None
         elif tree.data == "any_expr_in_formal":
             # Recurse into all children and return the first non-None result
             for child in tree.children:
@@ -192,10 +188,22 @@ class AgentLinguaParser:
                         return result
             return NaturalBlockNode([]) if result is None else None
         elif tree.data == "natural_block":
-            # child: natural_block_stripped
+            # child: natural_block_stripped or nat_line, etc.
             for child in tree.children:
                 if hasattr(child, "data") and child.data == "natural_block_stripped":
                     return self._tree_to_ast(child)
+            # Fallback: process all children (e.g., nat_line)
+            content = []
+            for child in tree.children:
+                result = self._tree_to_ast(child)
+                if result:
+                    # Always treat as list for consistency
+                    if isinstance(result, list):
+                        content.extend(result)
+                    else:
+                        content.extend([result])
+            print("DEBUG returning NaturalBlockNode with content:", content)
+            return NaturalBlockNode(content)
         elif tree.data == "natural_block_stripped":
             # children: NAT_BEGIN, _NL, natural_content, _NL, NAT_END, _NL?
             found_content = False
@@ -221,6 +229,18 @@ class AgentLinguaParser:
                     return NaturalBlockNode([TextNode(text)])
                 else:
                     return NaturalBlockNode([])
+        elif tree.data == "nat_line":
+            # nat_line: collect all tokens as text
+            text = ""
+            for sub in tree.children:
+                if isinstance(sub, Token):
+                    text += sub.value
+                elif isinstance(sub, str):
+                    text += sub
+            if text:
+                return TextNode(text)
+            else:
+                return None
         elif tree.data == "natural_content":
             # children: TEXT_CHAR, _NL, WS, or formal_expr_in_natural
             text = ""
