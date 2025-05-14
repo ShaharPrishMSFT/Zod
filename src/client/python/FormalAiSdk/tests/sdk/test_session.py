@@ -21,7 +21,7 @@ def mock_executor():
 
 @pytest.fixture
 def session(actor, mock_executor):
-    return ModelSession(actor, mock_executor)
+    return ModelSession(actor, executor=mock_executor)
 
 def test_init(session, actor):
     """Test session initialization."""

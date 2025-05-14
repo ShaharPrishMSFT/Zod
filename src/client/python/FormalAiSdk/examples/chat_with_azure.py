@@ -17,17 +17,20 @@ from FormalAiSdk.core.types import Conversation, Role
 from FormalAiSdk.models.litellm_executor import LiteLLMExecutor
 from FormalAiSdk.exceptions import ModelError, InvalidConversationError
 
+from FormalAiSdk.models.llm_models import LlmModels
+
 def main():
-    # Initialize the executor with Azure OpenAI
-    deployment = os.environ.get("AZURE_DEPLOYMENT_NAME", "gpt-4.1")
-    api_key = os.environ.get("AZURE_API_KEY")
-    api_base = os.environ.get("AZURE_API_BASE")
-    api_version = os.environ.get("AZURE_API_VERSION", "2025-01-01-preview")
-    print(f"DEBUG: AZURE_DEPLOYMENT_NAME={deployment}")
-    print(f"DEBUG: AZURE_API_KEY={'set' if api_key else 'MISSING'}")
-    print(f"DEBUG: AZURE_API_BASE={api_base}")
-    print(f"DEBUG: AZURE_API_VERSION={api_version}")
-    executor = LiteLLMExecutor("azure", deployment)
+    # Build Azure config using the unified entry point (env-based by default)
+    azure_config = LlmModels.From({
+        "provider": "azure"
+        # Optionally override with explicit values here
+        # "model": "azure/my-deployment",
+        # "api_key": "...",
+        # "api_base": "...",
+        # "api_version": "2025-01-01-preview"
+    })
+    print(f"DEBUG: Azure config: {azure_config}")
+    executor = LiteLLMExecutor(azure_config)
     
     # Create a conversation
     conversation = Conversation()

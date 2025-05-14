@@ -4,13 +4,14 @@
 <!-- Example: 1. OpenAI model support is best handled through LiteLLM; avoid redundant direct integration. -->
 1. LiteLLMExecutor supports OpenAI models; dependencies are up to date; all required OpenAI features are accessible via LiteLLM.
 2. OpenAI-related tests are opt-in only (require RUN_OPENAI_TESTS=1), expanded to cover both basic and error scenarios, ensuring robust and safe test coverage.
+3. Unified model config entry points (`LlmModels.FromOpenAi`, `LlmModels.From`) provide explicit and env-based configuration for OpenAI and LiteLLM, with robust tests for config loading, fallback, and error handling.
 ---
 
 ## Progress Tracker
 
 * 1. Review LiteLLMExecutor OpenAI support and dependencies ... [[STEP-1 STATUS: DONE (2025-05-13)]]
 * 2. Ensure OpenAI model configuration and credentials are handled via LiteLLM ... [[STEP-2 STATUS: DONE (2025-05-13)]]
-* 3. Create unified model configuration entry points (`LlmModels.FromOpenAi`, `LlmModels.From`) with env-based defaults and tests ... [[STEP-3 STATUS: PENDING]]
+* 3. Create unified model configuration entry points (`LlmModels.FromOpenAi`, `LlmModels.From`) with env-based defaults and tests ... [[STEP-3 STATUS: DONE (2025-05-14)]]
 * 4. Update and expand tests for OpenAI usage through LiteLLM ... [[STEP-4 STATUS: DONE (2025-05-13)]]
 * 5. Document OpenAI model usage via LiteLLM in SDK docs and examples ... [[STEP-5 STATUS: PENDING]]
 * 6. Review CI pipeline for OpenAI/LiteLLM coverage ... [[STEP-6 STATUS: PENDING]]

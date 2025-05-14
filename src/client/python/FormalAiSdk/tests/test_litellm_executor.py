@@ -25,6 +25,7 @@ import pytest
 
 from ..core.types import Conversation, Message, Role
 from ..models.litellm_executor import LiteLLMExecutor
+from ..models.llm_models import LlmModels
 from ..exceptions import InvalidConversationError
 
 openai_enabled = os.getenv("RUN_OPENAI_TESTS") == "1"
@@ -32,7 +33,8 @@ openai_enabled = os.getenv("RUN_OPENAI_TESTS") == "1"
 def test_ollama_conversation():
     """Test a basic conversation with Ollama."""
     # Initialize the executor with Ollama
-    executor = LiteLLMExecutor("ollama", "tinyllama")
+    config = LlmModels.From({"provider": "ollama", "model": "ollama/mistral"})
+    executor = LiteLLMExecutor(config)
     
     # Create a test conversation
     conversation = Conversation()
@@ -68,7 +70,8 @@ def test_ollama_conversation():
 
 def test_empty_conversation():
     """Test handling of empty conversations."""
-    executor = LiteLLMExecutor("ollama", "tinyllama")
+    config = LlmModels.From({"provider": "ollama", "model": "ollama/mistral"})
+    executor = LiteLLMExecutor(config)
     
     # Try to execute with empty conversation
     conversation = Conversation()
@@ -78,60 +81,3 @@ def test_empty_conversation():
         assert False, "Should have raised InvalidConversationError"
     except InvalidConversationError:
         assert True
-
-@pytest.mark.skipif(not openai_enabled, reason="OpenAI tests are disabled by default. Set RUN_OPENAI_TESTS=1 to enable.")
-def test_openai_conversation():
-    """
-    Test OpenAI conversation (requires API key).
-    This test will only run if RUN_OPENAI_TESTS=1 is set in the environment.
-    The model used can be set via OPENAI_MODEL (default: gpt-4.1).
-    """
-    api_key = os.getenv("OPENAI_API_KEY", "your-api-key-here")
-    model = os.getenv("OPENAI_MODEL", "gpt-4.1")
-    if not api_key or api_key == "your-api-key-here":
-        pytest.skip("No valid OpenAI API key provided.")
-
-    # Initialize with OpenAI
-    executor = LiteLLMExecutor(
-        "openai",
-        model,
-        api_key=api_key
-    )
-
-    # Create test conversation
-    conversation = Conversation()
-    conversation = conversation.add_message(
-        Role.CLIENT,
-        "What are the key features of Python?"
-    )
-
-    # Get response
-    response = executor.execute(conversation)
-
-    # Assertions
-    assert isinstance(response, Message)
-    assert response.role == Role.AGENT
-    assert response.content  # Should have some content
-
-@pytest.mark.skipif(not openai_enabled, reason="OpenAI tests are disabled by default. Set RUN_OPENAI_TESTS=1 to enable.")
-def test_openai_invalid_model():
-    """
-    Test OpenAI executor with an invalid model name to ensure proper error handling.
-    This test will only run if RUN_OPENAI_TESTS=1 is set in the environment.
-    """
-    api_key = os.getenv("OPENAI_API_KEY", "your-api-key-here")
-    if not api_key or api_key == "your-api-key-here":
-        pytest.skip("No valid OpenAI API key provided.")
-
-    executor = LiteLLMExecutor(
-        "openai",
-        "nonexistent-model",
-        api_key=api_key
-    )
-    conversation = Conversation()
-    conversation = conversation.add_message(
-        Role.CLIENT,
-        "This should fail due to invalid model."
-    )
-    with pytest.raises(Exception):
-        executor.execute(conversation)

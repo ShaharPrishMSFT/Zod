@@ -6,17 +6,23 @@ import pytest
 from datetime import datetime
 
 from FormalAiSdk.sdk.session import ModelSession
+from FormalAiSdk.models.llm_models import LlmModels
 from FormalAiSdk.models.litellm_executor import LiteLLMExecutor
 
 @pytest.fixture
-def executor():
-    """Create LiteLLM executor configured for tinyllama."""
-    return LiteLLMExecutor("ollama", "tinyllama")
+def model_config():
+    """Create model config for ollama/mistral (Ollama)."""
+    return LlmModels.From({"provider": "ollama", "model": "ollama/mistral"})
 
 @pytest.fixture
-def session(executor):
-    """Create a session with the tinyllama executor."""
-    return ModelSession("user", executor)
+def executor(model_config):
+    """Create LiteLLM executor configured for tinyllama."""
+    return LiteLLMExecutor(model_config)
+
+@pytest.fixture
+def session(model_config):
+    """Create a session with the tinyllama model config."""
+    return ModelSession("user", model_config=model_config)
 
 @pytest.mark.integration
 def test_basic_math(session):
