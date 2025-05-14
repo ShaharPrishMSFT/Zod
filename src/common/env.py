@@ -1,3 +1,5 @@
+print("[env.py] env.py module imported")
+
 import os
 from pathlib import Path
 
