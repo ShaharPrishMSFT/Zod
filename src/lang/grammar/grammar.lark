@@ -7,13 +7,17 @@ INLINE_TEXT     : "[" /[^\]\n]*/ "]"             // e.g.  action [Some text]
 EMBED_EXPR      : "{{" /[^}]*/ "}}"              // embedded formal expr inside natural text
 ID              : /[A-Za-z_][A-Za-z0-9_.]*/      // dotted or simple identifier
 // NAT_TEXT_LINE   : /(?!--end\b)(?!{{).+/         // any natural line not starting '--end' or '{{'
-NAT_TEXT_LINE   : /(?m)^[ \t]*(?!\-\-(?:begin|end)\b)(?!{{).+[^\n]/
+# NAT_TEXT_LINE   : /(?m)^[ \t]*(?!\-\-(?:begin|end)\b)(?!{{).+[^\n]/
+# TODO: The (?m) flag causes Python re.PatternError in Lark. This is a temporary workaround.
+# NAT_TEXT_LINE   : /^[ \t]*(?!\-\-(?:begin|end)\b)(?!{{).+[^\n]/
+# TODO: Temporary workaround: removed ^ anchor to allow matching at any line position.
+NAT_TEXT_LINE   : /[ \t]*(?!\-\-(?:begin|end)\b)(?!{{).+[^\n]/
 _NL             : /(\r?\n)+/
 _WS             : /[ \t]+/
 
 %ignore _WS
 %ignore COMMENT
-    `
+    # `
 // ────────── ENTRY ──────────
 start           : (_NL | decl)*
 
