@@ -38,7 +38,7 @@ natural_block   : _NL? BEGIN _NL (nat_line _NL)* END _NL?
 nat_line        : NAT_TEXT_LINE
                 | EMBED_EXPR
 
-formal_block    : _NL? "{" _NL stmt* "}" _NL?
+formal_block    : _NL? "{" (_NL | stmt)* "}" _NL?
 
 // ────────── STATEMENTS ──────────
 stmt            : _NL

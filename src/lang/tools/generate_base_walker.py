@@ -1,13 +1,13 @@
 """
 Script to auto-generate a base interpreter (tree walker) for the grammar in src/lang/grammar/grammar.lark.
-Outputs src/lang/interpreter/base_interpreter.py.
+Outputs src/lang/runtime/base_interpreter.py.
 """
 
 import os
 from lark import Lark, Transformer
 
 GRAMMAR_PATH = os.path.join(os.path.dirname(__file__), '..', 'grammar', 'grammar.lark')
-OUTPUT_PATH = os.path.join(os.path.dirname(__file__), '..', 'interpreter', 'base_interpreter.py')
+OUTPUT_PATH = os.path.join(os.path.dirname(__file__), '..', 'runtime', 'base_interpreter.py')
 
 HEADER = '''"""
 Auto-generated base interpreter for grammar.lark.

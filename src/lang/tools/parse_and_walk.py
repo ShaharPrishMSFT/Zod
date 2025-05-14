@@ -8,7 +8,7 @@ If no file is given, reads from stdin.
 import sys
 import pathlib
 from lark import Lark
-from src.lang.interpreter.base_interpreter import BaseInterpreter
+from src.lang.runtime.base_interpreter import BaseInterpreter
 
 GRAMMAR_PATH = str(pathlib.Path(__file__).parent.parent / "grammar" / "grammar.lark")
 
