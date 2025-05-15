@@ -9,10 +9,8 @@ USAGE:
 
 OPTIONS:
     --smart         Retry with OpenAI GPT-4.1-nano if the first model fails
-    --no-local      Only print the mapped git command, do not execute it locally
-    --log-stages    Enable detailed stage logging
-    --print-only    Only print the mapped git command, do not execute it
-    --capture-output  Print only the output of the git command (for test harnesses)
+    --no-local      Only print the mapped git command, do not execute it
+    --log-stages    Enable detailed stage logging and run the mapped command
 
 NOTES:
 - The tool assumes the current working directory is a git repository unless otherwise specified in the instruction.
@@ -22,6 +20,7 @@ EXAMPLES:
     python procedures/git_procedure.py "git status"
     python procedures/git_procedure.py --smart "Delete the branch 'feature-x'"
     python procedures/git_procedure.py --no-local "Create a new branch called hotfix and push it to origin"
+    python procedures/git_procedure.py --log-stages --smart "Find all files changed in the last 3 commits"
 """
 
 import sys
@@ -144,23 +143,14 @@ Conflict Resolution:
 
 # --- END KNOWLEDGE BASES ---
 
-def get_git_command_from_llm(english_instruction, smart_mode=False, log_stages=False):
-    """
-    Returns the git command string mapped from the English instruction using the LLM.
-    If smart_mode is True, will retry with OpenAI GPT-4.1-nano if the first model fails.
-    """
-    stage_log("before_llm_small", f"Preparing system prompt for small model:\n{BASIC_GIT_KB}", log_stages)
-    system_prompt = (
-        BASIC_GIT_KB
-        + "\n\nYou are a CLI assistant. Given an English instruction, output the corresponding git command only. "
-        "Do not explain. Do not add extra text. Output only the git command. Do not number your response. Do not repeat the command."
-    )
-    executor = LiteLLMExecutor("ollama", "mistral")
+def call_llm_model(model_type, model_name, system_prompt, instruction, log_stages, stage_prefix):
+    stage_log(f"before_llm_{stage_prefix}", f"Preparing system prompt for {stage_prefix} model:\n{system_prompt}", log_stages)
+    executor = LiteLLMExecutor(model_type, model_name)
     session = ModelSession("user", executor)
     session.add_response("system", system_prompt)
-    session.add_response("user", english_instruction)
-    stage_log("after_llm_small", f"Prompt sent to small model. Awaiting response...", log_stages)
-    fork = session.Fork("git_cmd_fork", "user", english_instruction)
+    session.add_response("user", instruction)
+    stage_log(f"after_llm_{stage_prefix}", f"Prompt sent to {stage_prefix} model. Awaiting response...", log_stages)
+    fork = session.Fork("git_cmd_fork", "user", instruction)
     fork.Answer(session)
     for msg in reversed(session.messages):
         if msg.actor == "git_cmd_fork":
@@ -170,84 +160,76 @@ def get_git_command_from_llm(english_instruction, smart_mode=False, log_stages=F
                 if line and "git " in line:
                     line = line.lstrip("0123456789. )-")
                     line = line.split(";")[0].strip()
-                    stage_log("after_llm_small", f"Small model returned: {line}", log_stages)
+                    stage_log(f"after_llm_{stage_prefix}", f"{stage_prefix.capitalize()} model returned: {line}", log_stages)
                     return line
-            stage_log("after_llm_small", f"Small model returned: {msg.content.strip()}", log_stages)
+            stage_log(f"after_llm_{stage_prefix}", f"{stage_prefix.capitalize()} model returned: {msg.content.strip()}", log_stages)
             return msg.content.strip()
-    # If not found and smart_mode, retry with OpenAI GPT-4.1-nano and full KB
-    if smart_mode:
-        stage_log("before_llm_smart", f"Preparing system prompt for smart model:\n{FULL_GIT_KB}", log_stages)
-        system_prompt = (
+    return None
+
+def get_git_command_from_llm(english_instruction, smart_mode=False, log_stages=False, no_local=False):
+    """
+    Returns the git command string mapped from the English instruction using the LLM.
+    If --no-local is set, only the smart model is called.
+    If --smart is set (without --no-local), local is tried first, then smart as fallback.
+    Otherwise, only the local model is called.
+    """
+    if no_local:
+        # Only call the smart model
+        system_prompt_smart = (
             FULL_GIT_KB
             + "\n\nYou are a CLI assistant and a git expert. Given an English instruction, output the corresponding git command only. "
             "Do not explain. Do not add extra text. Output only the git command. Do not number your response. Do not repeat the command."
         )
-        executor = LiteLLMExecutor("openai", "gpt-4.1-nano")
-        session = ModelSession("user", executor)
-        session.add_response("system", system_prompt)
-        session.add_response("user", english_instruction)
-        stage_log("after_llm_smart", f"Prompt sent to smart model. Awaiting response...", log_stages)
-        fork = session.Fork("git_cmd_fork", "user", english_instruction)
-        fork.Answer(session)
-        for msg in reversed(session.messages):
-            if msg.actor == "git_cmd_fork":
-                lines = msg.content.strip().splitlines()
-                for line in lines:
-                    line = line.strip()
-                    if line and "git " in line:
-                        line = line.lstrip("0123456789. )-")
-                        line = line.split(";")[0].strip()
-                        stage_log("after_llm_smart", f"Smart model returned: {line}", log_stages)
-                        return line
-                stage_log("after_llm_smart", f"Smart model returned: {msg.content.strip()}", log_stages)
-                return msg.content.strip()
-    return None
+        return call_llm_model("openai", "gpt-4.1-nano", system_prompt_smart, english_instruction, log_stages, "smart")
+    if smart_mode:
+        # Try local, then smart if local fails
+        system_prompt_small = (
+            BASIC_GIT_KB
+            + "\n\nYou are a CLI assistant. Given an English instruction, output the corresponding git command only. "
+            "Do not explain. Do not add extra text. Output only the git command. Do not number your response. Do not repeat the command."
+        )
+        result = call_llm_model("ollama", "mistral", system_prompt_small, english_instruction, log_stages, "small")
+        if result:
+            return result
+        system_prompt_smart = (
+            FULL_GIT_KB
+            + "\n\nYou are a CLI assistant and a git expert. Given an English instruction, output the corresponding git command only. "
+            "Do not explain. Do not add extra text. Output only the git command. Do not number your response. Do not repeat the command."
+        )
+        return call_llm_model("openai", "gpt-4.1-nano", system_prompt_smart, english_instruction, log_stages, "smart")
+    # Only local model
+    system_prompt_small = (
+        BASIC_GIT_KB
+        + "\n\nYou are a CLI assistant. Given an English instruction, output the corresponding git command only. "
+        "Do not explain. Do not add extra text. Output only the git command. Do not number your response. Do not repeat the command."
+    )
+    return call_llm_model("ollama", "mistral", system_prompt_small, english_instruction, log_stages, "small")
 
 def main():
-    overall_start = time.time()
     parser = argparse.ArgumentParser(description="LLM-powered English-to-git CLI agent")
     parser.add_argument("--smart", action="store_true", help="Retry with OpenAI GPT-4.1-nano if the first model fails")
-    parser.add_argument("--log-stages", action="store_true", help="Enable detailed stage logging and capture output automatically")
+    parser.add_argument("--no-local", action="store_true", help="Only call the smart model and print the mapped git command")
+    parser.add_argument("--log-stages", action="store_true", help="Enable detailed stage logging")
     parser.add_argument("instruction", nargs="+", help="English instruction to map to git command")
     args = parser.parse_args()
 
     english_instruction = " ".join(args.instruction).strip()
-    git_cmd_str = get_git_command_from_llm(english_instruction, smart_mode=args.smart, log_stages=args.log_stages)
+    git_cmd_str = get_git_command_from_llm(
+        english_instruction,
+        smart_mode=args.smart,
+        log_stages=args.log_stages,
+        no_local=args.no_local
+    )
     if not git_cmd_str:
         stage_log("error", "LLM did not return a command.", args.log_stages)
-        if args.smart:
+        if args.smart or args.no_local:
             stage_log("error", "Tried both ollama/mistral and OpenAI GPT-4.1-nano, but no command was returned.", args.log_stages)
         sys.exit(1)
 
-    # Always print the mapped command to stdout before running
+    # Always print the mapped command to stdout
     print(git_cmd_str)
 
-    # If --log-stages is set, capture output automatically and run the command
-    if args.log_stages:
-        stage_log("llm_result", f"LLM mapped command: {git_cmd_str}", True)
-        import shlex
-        git_cmd = shlex.split(git_cmd_str)
-        def run_and_time_git_command(cmd, cwd):
-            stage_log("before_git", f"Running: {' '.join(cmd)} in {cwd}", True)
-            start = time.time()
-            proc = subprocess.run(
-                cmd,
-                cwd=cwd,
-                capture_output=True,
-                text=True,
-                check=False,
-            )
-            print(proc.stdout, end="")
-            end = time.time()
-            stage_log("after_git", f"Command took {end - start:.3f} seconds", True)
-            return proc.returncode
-        repo_dir = Path.cwd()
-        if not (repo_dir / ".git").exists():
-            stage_log("error", f"Current directory {repo_dir} is not a git repository.", True)
-            sys.exit(1)
-        run_and_time_git_command(git_cmd, repo_dir)
-        overall_end = time.time()
-        stage_log("timing", f"Total playground session took {overall_end - overall_start:.3f} seconds", True)
+    # No git execution code remains in the script
 
 if __name__ == "__main__":
     main()
