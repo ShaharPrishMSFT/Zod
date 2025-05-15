@@ -15,7 +15,7 @@ except ImportError:
 
 from FormalAiSdk.core.types import Conversation, Role
 from FormalAiSdk.models.litellm_executor import LiteLLMExecutor
-from FormalAiSdk.exceptions import ModelError, InvalidConversationError
+from FormalAiSdk.exceptions.base import ModelError, InvalidConversationError
 
 def main():
     # Initialize the executor with Ollama

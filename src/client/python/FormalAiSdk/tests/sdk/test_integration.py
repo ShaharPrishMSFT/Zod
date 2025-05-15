@@ -7,7 +7,7 @@ from datetime import datetime
 
 from FormalAiSdk.sdk.session import ModelSession
 from FormalAiSdk.models.llm_models import LlmModels
-from FormalAiSdk.models.litellm_executor import LiteLLMExecutor
+from FormalAiSdk.core.litellm_executor import LiteLLMExecutor
 
 @pytest.fixture
 def model_config():

@@ -24,7 +24,7 @@ import os
 import pytest
 
 from ..core.types import Conversation, Message, Role
-from ..models.litellm_executor import LiteLLMExecutor
+from ..core.litellm_executor import LiteLLMExecutor
 from ..models.llm_models import LlmModels
 from ..exceptions import InvalidConversationError
 

@@ -14,8 +14,8 @@ except ImportError:
     pass
 
 from FormalAiSdk.core.types import Conversation, Role
-from FormalAiSdk.models.litellm_executor import LiteLLMExecutor
-from FormalAiSdk.exceptions import ModelError, InvalidConversationError
+from FormalAiSdk.core.litellm_executor import LiteLLMExecutor
+from FormalAiSdk.exceptions.base import ModelError, InvalidConversationError
 
 from FormalAiSdk.models.llm_models import LlmModels
 
