@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AgentLingua Playground</title>
+  <!-- CodeMirror 5 CDN (classic, stable, no build step) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #263238;
+      color: #ECEFF1;
+      height: 100vh;
+      display: flex;
+      flex-direction: row;
+    }
+    #editor-container {
+      flex: 1 1 60%;
+      min-width: 300px;
+      max-width: 60vw;
+      padding: 0;
+      background: #263238;
+      display: flex;
+      flex-direction: column;
+    }
+    #toolbar {
+      display: flex;
+      gap: 0.5em;
+      padding: 0.75em 1em 0.25em 1em;
+      background: #222d32;
+      border-bottom: 1px solid #37474f;
+      align-items: center;
+    }
+    #editor {
+      flex: 1 1 auto;
+      height: 100vh;
+    }
+    #output-panel {
+      flex: 1 1 40%;
+      min-width: 250px;
+      max-width: 40vw;
+      background: #1e272c;
+      color: #fff;
+      padding: 1em;
+      overflow: auto;
+      border-left: 2px solid #37474f;
+    }
+    .CodeMirror {
+      height: 100vh;
+      font-size: 16px;
+      background: #263238;
+      color: #ECEFF1;
+    }
+    .status-message {
+      margin-left: 1em;
+      color: #90caf9;
+      font-size: 0.95em;
+      min-width: 120px;
+    }
+    button {
+      background: #37474f;
+      color: #ECEFF1;
+      border: none;
+      border-radius: 3px;
+      padding: 0.4em 1em;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #455a64;
+    }
+    input[type="file"] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="editor-container">
+    <div id="toolbar">
+      <button id="openBtn">Open</button>
+      <input type="file" id="fileInput" accept=".al">
+      <button id="saveBtn">Save</button>
+      <button id="copyBtn">Copy</button>
+      <span class="status-message" id="statusMsg"></span>
+    </div>
+    <div id="editor"></div>
+  </div>
+  <div id="output-panel">
+    <h3>Parse Output</h3>
+    <div id="output-content">Ready.</div>
+  </div>
+  <!-- CodeMirror JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/mode/simple.min.js"></script>
+  <script>
+    // Minimal AgentLingua .al example
+    const defaultAL = `# Functions must have an ID
+
+context
+--begin
+You are an AI agent. Tell me your name.
+--end
+`;
+
+    // Define a minimal AgentLingua mode for CodeMirror
+    CodeMirror.defineSimpleMode("agentlingua", {
+      start: [
+        {regex: /#.*$/, token: "comment"},
+        {regex: /\b(context|function|rule|input|action|if|then|else|when|nop)\b/, token: "keyword"},
+        {regex: /--begin|--end/, token: "atom"},
+        {regex: /{{|}}|\[|\]|\{|\}/, token: "bracket"},
+        {regex: /"(?:[^\\"]|\\.)*"?/, token: "string"},
+        {regex: /[A-Za-z_][A-Za-z0-9_.]*/, token: "variable"},
+      ],
+      meta: {
+        lineComment: "#"
+      }
+    });
+
+    // Initialize CodeMirror editor
+    const editor = CodeMirror(document.getElementById('editor'), {
+      value: defaultAL,
+      mode: "agentlingua",
+      theme: "material",
+      lineNumbers: true,
+      indentUnit: 2,
+      tabSize: 2,
+      indentWithTabs: false,
+      autofocus: true,
+      lineWrapping: true,
+      extraKeys: {
+        "Tab": function(cm) {
+          if (cm.somethingSelected()) {
+            cm.indentSelection("add");
+          } else {
+            cm.replaceSelection("  ", "end", "+input");
+          }
+        },
+        "Shift-Tab": function(cm) {
+          cm.indentSelection("subtract");
+        }
+      }
+    });
+
+    // File I/O logic
+    const openBtn = document.getElementById('openBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const fileInput = document.getElementById('fileInput');
+    const statusMsg = document.getElementById('statusMsg');
+    let lastFilename = 'agentlingua.al';
+
+    openBtn.onclick = () => fileInput.click();
+
+    fileInput.onchange = e => {
+      const file = e.target.files[0];
+      if (file) {
+        lastFilename = file.name;
+        file.text().then(text => {
+          editor.setValue(text);
+          showStatus(`Loaded "${file.name}"`);
+        }).catch(() => {
+          showStatus('Failed to load file', true);
+        });
+      }
+      // Reset input so same file can be loaded again if needed
+      fileInput.value = '';
+    };
+
+    saveBtn.onclick = () => {
+      const content = editor.getValue();
+      const blob = new Blob([content], {type: 'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = lastFilename || 'agentlingua.al';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 0);
+      showStatus(`Saved as "${a.download}"`);
+    };
+
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(editor.getValue())
+        .then(() => showStatus('Copied to clipboard'))
+        .catch(() => showStatus('Copy failed', true));
+    };
+
+    function showStatus(msg, isError) {
+      statusMsg.textContent = msg;
+      statusMsg.style.color = isError ? '#ff8a80' : '#90caf9';
+      setTimeout(() => { statusMsg.textContent = ''; }, 2000);
+    }
+  </script>
+</body>
+</html>
