@@ -27,9 +27,9 @@ Three primary block types:
    ```
    function ID block_body
    ```
-   - Named operations with inputs
+   - Named operations
    - Required ID for referencing
-   - Support parameter passing
+   - Support parameter passing (future)
 
 3. **Rule Blocks**
    ```
@@ -48,14 +48,15 @@ Three primary block types:
    - Support both inline and block formats
    - Allow embedding of formal expressions (future)
    - Preserve natural language formatting
+   - Support variable interpolation (future)
 
 2. **Formal Expressions** 
    ```
    formal_expr = "{{" stmt "}}"
    ```
    - Embedded within natural content (future)
-   - Support variable interpolation
-   - Enable dynamic content generation
+   - Support variable interpolation (future)
+   - Enable dynamic content generation (future)
 
 ### 2.4 Statements
 1. **Conditional Statements**
@@ -114,21 +115,25 @@ You are an AI agent. Tell me your name.
 --end
 ```
 
-### Function with Parameters
+### Function (Basic)
 ```
-# Function with input parameter
+# Simple function
 function uigreetingwelcome {
-    input [userName]
     action
     --begin
-    Processing greeting:
-    {{ action
-        --begin
-        User details to include:
-        - Name: {{ userName }}
-        - Time: {{ currentTime }}
-        --end
-    }}
+    Processing greeting
+    --end
+}
+```
+
+### Function with Parameters (future)
+```
+# TODO: Function parameters will be supported in future versions
+function uigreetingwelcome {
+    input [userName]  // Future feature
+    action
+    --begin
+    Processing greeting for user
     --end
 }
 ```

@@ -14,16 +14,12 @@ __pycache__/
 *$py.class
 *.so
 .Python
-.env
-.venv
-env/
-venv/
-.pytest_cache/
 
 # Distribution/packaging
 dist/
 build/
 *.egg-info/
+<<<<<<< HEAD
 
 # Playwright test output
 test-results/
@@ -35,3 +31,16 @@ node_modules/
 .DS_Store
 Thumbs.db
 *.log
+=======
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.env
+.venv
+env/
+venv/
+
+# Testing
+.pytest_cache/
+>>>>>>> formalai.lang

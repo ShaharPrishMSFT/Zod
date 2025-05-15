@@ -3,10 +3,11 @@
 context auth.session.manager
 {
     action
-    --begin
-    Session initialization:
-    {{ action [Creating new session] }}
-    --end
+        --begin
+        Session initialization:
+
+        {{ action [Creating new session] }}
+        --end
 }
 
 # User verification function
@@ -14,48 +15,58 @@ function auth.user.verify
 {
     input [userId]
     if
-    --begin
-    Verifying credentials:
-    {{ input [This is probably the worst usage for this] }}
-    --end
+        --begin
+        Verifying credentials:
+
+
+
+
+        {{ input [This is probably the worst usage for this] }}
+        --end
     then
     {
         action [Credentials verified]
     }
+
+
+
     else
-    --begin
-    Verification failed:
-    {{ action [Recording failure details] }}
-    --end
+    {
+        --begin
+        Verification failed:
+        {{ action [Recording failure details] }}
+        --end
+    }
 }
 
 # User greeting rules with nested blocks
 rule
 {
     when
-    --begin
-    User authentication:
-    {{ if
         --begin
-        Checking login history:
-        {{ action [History retrieved] }}
+        User authentication:
+        {{
+            if
+                --begin
+                Checking login history:
+                {{ action [History retrieved] }}
+                --end
+            then
+            {
+                action [User recognized]
+            }
+            else
+            {
+                action [New user detected]
+            }
+        }}
         --end
-        then
-        {
-            action [User recognized]
-        }
-        else
-        {
-            action [New user detected]
-        }
-    }}
-    --end
     then
     {
         action
-        --begin
-        Processing greeting:
-        {{ action [Customizing welcome message] }}
-        --end
+            --begin
+            Processing greeting:
+            {{ action [Customizing welcome message] }}
+            --end
     }
 }
