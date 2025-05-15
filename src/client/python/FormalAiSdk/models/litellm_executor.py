@@ -49,10 +49,13 @@ class LiteLLMExecutor(ModelExecutor):
     
     def _convert_role(self, role: Role) -> str:
         """Convert our Role enum to LiteLLM role string."""
-        return {
+        # Map our roles to litellm roles
+        role_mapping = {
             Role.AGENT: "assistant",
-            Role.CLIENT: "user"
-        }[role]
+            Role.CLIENT: "user",
+            Role.SYSTEM: "system"  # Handle system messages
+        }
+        return role_mapping.get(role, "user")  # Default to user if unknown role
     
     def _convert_messages(self, conversation: Conversation) -> List[Dict[str, str]]:
         """Convert our Message objects to LiteLLM format."""
@@ -99,11 +102,28 @@ class LiteLLMExecutor(ModelExecutor):
         try:
             messages = self._convert_messages(conversation)
             
-            # Execute the model
-            response = litellm.completion(
-                model=self.model,
-                messages=messages
-            )
+            if self.provider == "ollama":
+                # For Ollama, construct a single prompt string
+                prompt = ""
+                for msg in messages:
+                    if msg["role"] == "system":
+                        prompt += f"<system>\n{msg['content']}\n</system>\n\n"
+                    elif msg["role"] == "user":
+                        prompt += f"{msg['content']}\n\n"
+                    else:  # assistant
+                        prompt += f"Assistant: {msg['content']}\n\n"
+                
+                # Execute with constructed prompt
+                response = litellm.completion(
+                    model=self.model,
+                    messages=[{"role": "user", "content": prompt}]
+                )
+            else:
+                # For other providers, use standard message format
+                response = litellm.completion(
+                    model=self.model,
+                    messages=messages
+                )
             
             # Extract the response content
             content = response["choices"][0]["message"]["content"]

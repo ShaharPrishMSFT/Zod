@@ -39,8 +39,10 @@ class ModelFork:
             fork = ModelFork("fork1", "user", "Hello", executor)
             fork.Answer(session)  # Executes model and adds response
         """
-        # Create conversation with just this message
-        conversation = CoreConversation()
+        # Get existing conversation history from session
+        conversation = session.get_conversation_history()
+        
+        # Add fork's message to existing conversation
         conversation = conversation.add_message(
             Role.CLIENT if self.from_actor == session.actor else Role.AGENT,
             self.message

@@ -35,8 +35,13 @@ class ModelSession:
         
         conversation = CoreConversation()
         for msg in messages:
-            # Simple mapping - trunk owner is CLIENT, others are AGENT
-            role = Role.CLIENT if msg.actor == self.actor else Role.AGENT
+            # Map roles based on actor type
+            if msg.actor == self.actor:
+                role = Role.CLIENT
+            elif msg.actor == "system":
+                role = Role.SYSTEM
+            else:
+                role = Role.AGENT
             conversation = conversation.add_message(role, msg.content)
         return conversation
 
