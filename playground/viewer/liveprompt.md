@@ -1,20 +1,21 @@
 # Process: Archiving Completed Steps
 
 When a step is completed:
-1. Move its full content (including heading and details) from `playground/viewer/liveprompt.md` to the top of `playground/viewer/liveprompt.archive.md`.
-2. Mark the step as completed in the steps list, with the completion date.
-3. Commit both file changes to the current working branch.
+1. **Delete the full content of the completed step from `playground/viewer/liveprompt.md`, leaving only a summary line in its place.**
+2. Move the full content (including heading and details) to the top of `playground/viewer/liveprompt.archive.md`.
+3. Mark the step as completed in the steps list, with the completion date.
+4. Commit both file changes to the current working branch.
 
 # Steps & Completion Log
 
 - [x] **Step 1: Problem Statement** — *Completed: 2025-05-13*
-- [ ] **Step 2: User Stories / Use Cases**
-- [ ] **Step 3: Requirements & Constraints**
+- [x] **Step 2: User Stories / Use Cases** — *Completed: 2025-05-13*
+- [x] **Step 3: Requirements & Constraints** — *Completed: 2025-05-13*
 - [ ] **Step 4: Initial Design / Wireframe**
 - [ ] **Step 5: Implementation Plan**
 
 **Instructions:**  
-When a step is completed, move its full content (including heading and details) to `playground/viewer/liveprompt.archive.md` to keep this file focused on active work.
+When a step is completed, move its full content (including heading and details) to `playground/viewer/liveprompt.archive.md` to keep this file focused on active work. Don't forget to delete it from this doc once moved.
 
 ---
 
@@ -26,27 +27,12 @@ When a step is completed, move its full content (including heading and details) 
 ---
 
 ## Step 2: User Stories / Use Cases
-
-**List the main user stories or use cases.**  
-- As a developer, I want to open an `.al` file in my browser and see its structure as a flow diagram.
-- As a user, I want to drag-and-drop or select an `.al` file to visualize it.
-- As a developer, I want to see nodes for contexts, functions, rules, and their relationships (edges).
-- As a user, I want to interact with the diagram (e.g., zoom, pan, click nodes for details).
-- (Optional/future) As a user, I want to export the diagram or share a snapshot.
+*See archive for full details. Step completed 2025-05-13.*
 
 ---
 
 ## Step 3: Requirements & Constraints
-
-**Define the requirements and constraints for the viewer.**  
-- Must be a single HTML file (with embedded JS/CSS) for easy local use.
-- No server or build step required; should work by double-clicking or opening in browser.
-- Support for loading `.al` files via file picker and/or drag-and-drop.
-- Parse `.al` files according to AgentLingua grammar (see `src/lang/grammar/grammar.peg`).
-- Render a flow diagram showing contexts, functions, rules, and their relationships.
-- Interactive UI: zoom, pan, and node selection.
-- No code editing features.
-- No external dependencies unless loaded via CDN (e.g., D3.js, Mermaid, or similar for diagrams).
+*See archive for full details. Step completed 2025-05-13.*
 
 ---
 
