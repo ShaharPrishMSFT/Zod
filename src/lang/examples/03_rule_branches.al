@@ -4,12 +4,14 @@ rule sales.pricing.discount
     when
     --begin
     Evaluating premium status:
-    {{ action
-    --begin
-    Checking membership details:
-    - Status active
-    - Premium tier
-    --end }}
+    {{
+        action
+            --begin
+            Checking membership details:
+            - Status active
+            - Premium tier
+            --end
+    }}
     --end
     then
     {
@@ -17,7 +19,7 @@ rule sales.pricing.discount
     }
     action
     --begin
-    Processing standard pricing:
-    {{ action [Using base rate calculation] }}
+        Processing standard pricing:
+        {{ action [Using base rate calculation] }}
     --end
 }

@@ -1,4 +1,4 @@
-# Functions must have an ID
+# Contexts dont have to have an id
 
 context
 --begin

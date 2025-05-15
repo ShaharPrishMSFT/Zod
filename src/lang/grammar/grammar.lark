@@ -1,0 +1,63 @@
+%ignore /#.*/                  # ignore comments
+%ignore /\s+/                  # ignore whitespace (spaces, tabs; keep newlines for NATURAL_TEXT)
+
+BEGIN: "--begin"
+END: "--end"
+DOPEN: "{{"
+DCLOSE: "}}"
+LBRACE: "{"
+RBRACE: "}"
+
+
+RULE: "rule"
+FUNCTION: "function"
+CONTEXT: "context"
+WHEN: "when"
+IF: "if"
+THEN: "then"
+ELSE: "else"
+ACTION: "action"
+INPUT: "input"
+
+DOTTED_NAME: /[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*/
+BRACKET_CONTENT: /\[[^\]]+\]/
+COND_TEXT: /[^\]]+/
+
+start: (context_decl | function_decl | rule_decl)*
+
+context_decl: CONTEXT DOTTED_NAME? context_body
+context_body: LBRACE stmt_list RBRACE
+             | natural_block
+
+function_decl: FUNCTION DOTTED_NAME LBRACE stmt_list RBRACE
+
+rule_decl: RULE DOTTED_NAME? LBRACE stmt_list RBRACE
+
+stmt_list: stmt*
+
+stmt: inline_action
+    | inline_input
+    | natural_action
+    | if_stmt
+    | when_stmt
+
+inline_action: ACTION BRACKET_CONTENT
+inline_input: INPUT BRACKET_CONTENT
+
+natural_action: ACTION natural_block
+
+if_stmt: IF if_condition then_part else_part?
+if_condition: "[" COND_TEXT "]"
+            | natural_block
+            | LBRACE stmt_list RBRACE
+then_part: THEN LBRACE stmt_list RBRACE
+else_part: ELSE LBRACE stmt_list RBRACE
+
+when_stmt: WHEN if_condition then_part else_part?
+
+natural_block: BEGIN natural_inner END
+natural_inner: (NATURAL_TEXT | double_expr)*
+
+double_expr: DOPEN stmt_list DCLOSE
+
+NATURAL_TEXT: /([^{}]|\{(?!\{)|\}(?!\}))+/ 
