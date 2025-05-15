@@ -24,28 +24,69 @@ class LiteLLMExecutor(ModelExecutor):
         api_key: Optional API key for cloud providers (not needed for Ollama)
     """
     
-    def __init__(self, provider: str, model: str, api_key: Optional[str] = None):
+    def __init__(self, model_config: dict):
         """
-        Initialize the LiteLLM executor.
-        
+        Initialize the LiteLLM executor using a unified config dictionary.
+
         Args:
-            provider: The LLM provider to use ("openai" or "ollama")
-            model: The model name to use
-            api_key: Optional API key for cloud providers
-            
+            model_config (dict): Model configuration as returned by LlmModels.FromOpenAi or LlmModels.From.
+                Expected keys: provider, model, api_key, api_base, api_version, deployment, etc.
+
         Example:
             # For OpenAI
-            executor = LiteLLMExecutor("openai", "gpt-3.5-turbo", "sk-...")
-            
+            config = LlmModels.FromOpenAi()
+            executor = LiteLLMExecutor(config)
+
+            # For Azure OpenAI
+            config = LlmModels.From({
+                "provider": "azure",
+                "model": "azure/my-deployment",
+                "api_key": "...",
+                "api_base": "...",
+                "api_version": "2025-01-01-preview"
+            })
+            executor = LiteLLMExecutor(config)
+
             # For Ollama
-            executor = LiteLLMExecutor("ollama", "llama2")
+            config = LlmModels.From({
+                "provider": "ollama",
+                "model": "ollama/llama2"
+            })
+            executor = LiteLLMExecutor(config)
         """
-        self.provider = provider.lower()
-        self.model = f"{provider}/{model}"  # Format expected by litellm
-        
-        # Set API key if provided
-        if api_key:
-            litellm.api_key = api_key
+        self.provider = model_config.get("provider", "openai").lower()
+        self.model = model_config.get("model")
+        self.litellm_kwargs = {}
+
+        # Azure OpenAI support
+        if self.provider == "azure":
+            self.model = self.model or f"azure/{model_config.get('deployment')}"
+            self.litellm_kwargs = {
+                "api_key": model_config.get("api_key"),
+                "api_base": model_config.get("api_base"),
+                "api_version": model_config.get("api_version", "2025-01-01-preview"),
+            }
+        elif self.provider == "openai":
+            # OpenAI cloud
+            self.model = self.model or "gpt-4.1"
+            self.litellm_kwargs = {}
+            api_key = model_config.get("api_key")
+            if api_key:
+                litellm.api_key = api_key
+            api_base = model_config.get("api_base")
+            if api_base:
+                self.litellm_kwargs["api_base"] = api_base
+            api_version = model_config.get("api_version")
+            if api_version:
+                self.litellm_kwargs["api_version"] = api_version
+        elif self.provider == "ollama":
+            # Ollama local
+            self.model = self.model or "ollama/llama2"
+            self.litellm_kwargs = {}
+        else:
+            # Generic fallback
+            self.litellm_kwargs = {k: v for k, v in model_config.items() if k not in ("provider", "model")}
+
     
     def _convert_role(self, role: Role) -> str:
         """Convert our Role enum to LiteLLM role string."""

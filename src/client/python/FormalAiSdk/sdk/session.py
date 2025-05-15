@@ -12,17 +12,25 @@ class ModelSession:
     """
     Manages a trunk conversation.
     """
-    def __init__(self, actor: str, executor: ModelExecutor = None):
+    def __init__(self, actor: str, model_config: dict = None, executor: ModelExecutor = None):
         """
         Initialize a new trunk conversation.
-        
+
         Args:
             actor: The actor who owns the trunk conversation
-            executor: Optional ModelExecutor for handling model responses
+            model_config: Unified model configuration dict (from LlmModels.FromOpenAi or LlmModels.From)
+            executor: Optional ModelExecutor for handling model responses (overrides model_config if provided)
         """
-        self.actor = actor 
+        self.actor = actor
         self.messages: List[Message] = []
-        self.executor = executor
+        self.model_config = model_config
+        if executor is not None:
+            self.executor = executor
+        elif model_config is not None:
+            from ..models.litellm_executor import LiteLLMExecutor
+            self.executor = LiteLLMExecutor(model_config)
+        else:
+            self.executor = None
 
     def get_conversation_history(self, include_last_n: int = None) -> CoreConversation:
         """

@@ -1,20 +1,14 @@
-# Git worktrees
-/worktrees/
-
-# IDE and Editor files
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
+# Secrets
+.env
+.env.*
+!.env.example
 
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
-
 # Distribution/packaging
 dist/
 build/
@@ -40,3 +34,16 @@ venv/
 
 # Testing
 .pytest_cache/
+ENV/
+env.bak/
+venv.bak/
+
+# VSCode
+.vscode/
+
+# Test cache
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db
