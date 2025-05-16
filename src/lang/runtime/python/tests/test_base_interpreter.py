@@ -13,8 +13,8 @@ from base_interpreter import BaseInterpreter
 EXAMPLES_DIR = pathlib.Path(__file__).parents[3] / "examples"
 GRAMMAR_PATH = pathlib.Path(__file__).parents[3] / "grammar" / "grammar.lark"
 
-# Only test the specific file for focused debugging
-example_file = EXAMPLES_DIR / "02_rule_with_else.al"
+# Parameterize over all .al files in the examples directory
+example_files = list(EXAMPLES_DIR.glob("*.al"))
 
 import hashlib
 import re
@@ -47,7 +47,7 @@ def test_grammar_and_base_interpreter_hash_match():
         "Please regenerate the base interpreter after editing the grammar."
     )
 
-@pytest.mark.parametrize("example_path", [example_file])
+@pytest.mark.parametrize("example_path", example_files)
 def test_base_interpreter_walks_example(example_path):
     code = example_path.read_text(encoding="utf-8")
     parser = Lark.open(str(GRAMMAR_PATH), parser="lalr", propagate_positions=True, maybe_placeholders=False)

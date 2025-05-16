@@ -1,14 +1,10 @@
-# Leading comment without space
-   # Comment with leading spaces
-	# Comment with leading tab
-function test.comments
-{
-    action [Some action]  # Inline comment no space
-    input [Some input]    # Inline comment with spaces
-	action [Other]        # Inline comment with tab
-}
+# Comments and whitespace handling
 
-# Current supported forms:
-function example.supported
-{
-}
+context
+--begin
+Some action.
+Some input.
+Other action.
+
+# Current supported forms: All logic is now in natural language and control flow only.
+--end
