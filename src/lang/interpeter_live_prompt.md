@@ -1,4 +1,12 @@
 # Simple .ai Interpreter Design (Live Prompt)
+## Current Status
+
+| Layer    | Status        | Notes                        |
+|----------|--------------|------------------------------|
+| Layer 1  | Complete     | Parser connected, stubs done |
+| Layer 2  | In Progress  | Context processing started   |
+| Layer 3  | Not Started  |                              |
+| Layer 4  | Not Started  |                              |
 
 This design describes a layered interpreter for `.ai` files, leveraging the FormalAI SDK infrastructure in [`src/client/python/FormalAiSdk/sdk/`](../client/python/FormalAiSdk/sdk/).
 
@@ -88,15 +96,6 @@ for msg in session.messages:
 
 ---
 
-## Layer 1: Parser Connection & Stubs
-
-- Connect to the base parser (import and instantiate, but do not process input yet).
-- Implement stub methods for all major interpreter components:
-  - LLM execution (e.g., `run_llm_stub`)
-  - Context processing (e.g., `process_context_stub`)
-  - Output handling (e.g., `output_results_stub`)
-- All stubs should have correct signatures and docstrings, but raise `NotImplementedError` or return dummy values.
-- Ensure the code compiles and can be imported, even if tests fail.
 
 ## Layer 2: Context Processing
 
