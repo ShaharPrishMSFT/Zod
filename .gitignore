@@ -2,7 +2,7 @@
 .env
 .env.*
 !.env.example
-
+worktrees/
 # Python
 __pycache__/
 *.pyc
