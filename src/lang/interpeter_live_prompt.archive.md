@@ -15,3 +15,9 @@ This file is an archive of the live prompt before moving to Layer 2. And it most
 - All stubs should have correct signatures and docstrings, but raise `NotImplementedError` or return dummy values.
 - Ensure the code compiles and can be imported, even if tests fail.
 
+## Layer 2: Context Processing
+
+- Implement logic to process and manage context extracted from `.ai` files.
+- Fill in the `process_context` method to parse and store relevant context for execution.
+- Ensure context is correctly passed between interpreter components.
+- Add/adjust tests to verify context extraction and storage.
