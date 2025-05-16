@@ -31,10 +31,20 @@ from pathlib import Path
 # Import FormalAI SDK
 SDK_PATH = (Path(__file__).parent / "../src/client/python").resolve()
 sys.path.insert(0, str(SDK_PATH))
-from FormalAiSdk.models.litellm_executor import LiteLLMExecutor
+from FormalAiSdk.core.litellm_executor import LiteLLMExecutor
+from FormalAiSdk.core.openai_executor import OpenAIExecutor
 from FormalAiSdk.sdk.session import ModelSession
+from FormalAiSdk.models.llm_models import LlmModels
 
 import argparse
+import os
+
+# Load environment variables from .env if present
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 def stage_log(stage, message, enabled):
     if enabled:
@@ -145,7 +155,12 @@ Conflict Resolution:
 
 def call_llm_model(model_type, model_name, system_prompt, instruction, log_stages, stage_prefix):
     stage_log(f"before_llm_{stage_prefix}", f"Preparing system prompt for {stage_prefix} model:\n{system_prompt}", log_stages)
-    executor = LiteLLMExecutor(model_type, model_name)
+    if model_type == "openai":
+        llm_model = LlmModels.FromOpenAi()
+        executor = OpenAIExecutor()
+    else:
+        llm_model = LlmModels.From()
+        executor = LiteLLMExecutor(llm_model)
     session = ModelSession("user", executor)
     session.add_response("system", system_prompt)
     session.add_response("user", instruction)
@@ -188,7 +203,7 @@ def get_git_command_from_llm(english_instruction, smart_mode=False, log_stages=F
             + "\n\nYou are a CLI assistant. Given an English instruction, output the corresponding git command only. "
             "Do not explain. Do not add extra text. Output only the git command. Do not number your response. Do not repeat the command."
         )
-        result = call_llm_model("ollama", "mistral", system_prompt_small, english_instruction, log_stages, "small")
+        result = call_llm_model("ollama", os.environ.get("OPENAI_MODEL", "phi3"), system_prompt_small, english_instruction, log_stages, "small")
         if result:
             return result
         system_prompt_smart = (
@@ -203,13 +218,16 @@ def get_git_command_from_llm(english_instruction, smart_mode=False, log_stages=F
         + "\n\nYou are a CLI assistant. Given an English instruction, output the corresponding git command only. "
         "Do not explain. Do not add extra text. Output only the git command. Do not number your response. Do not repeat the command."
     )
-    return call_llm_model("ollama", "mistral", system_prompt_small, english_instruction, log_stages, "small")
+    return call_llm_model("ollama", os.environ.get("OPENAI_MODEL", "phi3"), system_prompt_small, english_instruction, log_stages, "small")
 
 def main():
     parser = argparse.ArgumentParser(description="LLM-powered English-to-git CLI agent")
     parser.add_argument("--smart", action="store_true", help="Retry with OpenAI GPT-4.1-nano if the first model fails")
     parser.add_argument("--no-local", action="store_true", help="Only call the smart model and print the mapped git command")
     parser.add_argument("--log-stages", action="store_true", help="Enable detailed stage logging")
+    # Added for test harness compatibility; ignored by script logic
+    parser.add_argument("--capture-output", action="store_true", help="(Test harness) Ignored")
+    parser.add_argument("--repo", type=str, default=None, help="(Test harness) Ignored")
     parser.add_argument("instruction", nargs="+", help="English instruction to map to git command")
     args = parser.parse_args()
 

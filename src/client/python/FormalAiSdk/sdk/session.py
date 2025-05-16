@@ -27,8 +27,13 @@ class ModelSession:
         if executor is not None:
             self.executor = executor
         elif model_config is not None:
-            from ..models.litellm_executor import LiteLLMExecutor
-            self.executor = LiteLLMExecutor(model_config)
+            from ..core.litellm_executor import LiteLLMExecutor
+            # If model_config is already a ModelExecutor, use it directly
+            from ..core.executor import ModelExecutor
+            if isinstance(model_config, ModelExecutor):
+                self.executor = model_config
+            else:
+                self.executor = LiteLLMExecutor(model_config)
         else:
             self.executor = None
 
