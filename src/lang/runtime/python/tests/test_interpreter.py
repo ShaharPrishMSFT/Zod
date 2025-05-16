@@ -184,7 +184,7 @@ def test_run_llm_real_ollama_phi():
         "--end\n"
     )
     interp = AIInterpreter.from_code(ai_content)
-    messages = interp.run_llm(prompt="What is the capital of France?", model_name="ollama", model_variant="phi")
+    messages = interp.run_llm(prompt="What is the capital of France?", model_name="ollama", model_variant="phi3:mini")
     # Should contain a user message and an LLM response
     actors = [m["actor"] for m in messages]
     contents = [m["content"] for m in messages]

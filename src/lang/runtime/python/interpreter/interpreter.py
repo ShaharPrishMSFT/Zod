@@ -70,8 +70,11 @@ class AIInterpreter(BaseInterpreter):
         # Use the correct LlmModels static methods for config
         if model_name == "openai":
             model_config = LlmModels.FromOpenAi()
+        elif model_name == "ollama":
+            # For Ollama, model string must be "ollama/modelname"
+            model_str = f"ollama/{model_variant}"
+            model_config = LlmModels.From({"provider": "ollama", "model": model_str})
         else:
-            # For ollama or any other provider, use From() with explicit config
             model_config = LlmModels.From({"provider": model_name, "model": model_variant})
 
         executor = LiteLLMExecutor(model_config)

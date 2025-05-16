@@ -43,12 +43,38 @@ Persistence – Always load the existing file (do not start over), then save edi
 
 ## Layered Implementation Plan
 
-This interpreter should be built in four layers, each corresponding to a development milestone:
+This interpreter should be built in seven steps, each corresponding to a development milestone:
 
-- **Layer 1:** Connect to the base parser, but do nothing else. Provide stub methods for LLM and all other logic so the code compiles, even if tests fail.
-- **Layer 2:** Implement context processing.
-- **Layer 3:** Integrate LLM calls.
-- **Layer 4:** Connect context and LLM calls. At this point, context tests should pass.
+- **Step 1:** Connect to the base parser, but do nothing else. Provide stub methods for LLM and all other logic so the code compiles, even if tests fail.
+- **Step 2:** Implement context processing.
+- **Step 3:** Integrate LLM calls.
+- **Step 4:** Connect context and LLM calls. At this point, context tests should pass.
+- **Step 5:** Implement all other statement types (besides input) in the interpreter.
+- **Step 6:** Implement a contract/interface for runtimes, so the interpreter can support multiple runtime types.
+- **Step 7:** Implement a terminal runtime (for console execution).
+
+---
+
+## Step 5: Implement if statements
+
+- Implement support for the if statements. 
+- This includes conditonals
+- Ensure each statement type is parsed, represented in the interpreter, and executed according to its semantics.
+- Add/adjust tests to verify correct handling and execution of each statement type.
+
+## Step 6: Implement Runtime Contract
+
+- Define a contract (interface or abstract base class) for runtimes that the interpreter can use.
+- The contract should specify the methods and behaviors required for any runtime implementation (e.g., execute, handle input/output, manage state).
+- Refactor the interpreter to interact with runtimes only through this contract, allowing for pluggable runtime implementations.
+- Document the contract and provide example usage.
+
+## Step 7: Implement Terminal Runtime
+
+- Implement a terminal runtime that executes when the interpreter is run in a console environment.
+- This runtime should handle user input/output via the terminal, display results, and support interactive execution.
+- Ensure the terminal runtime adheres to the runtime contract/interface.
+- Add tests or manual usage examples to verify terminal execution works as intended.
 
 ---
 
