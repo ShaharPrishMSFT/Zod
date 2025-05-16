@@ -1,16 +1,7 @@
-from pathlib import Path
-import sys
-import os
-# Import FormalAI SDK
-SDK_PATH = (Path(__file__).parent / "../../../../client/python").resolve()
-sys.path.insert(0, str(SDK_PATH))
 from FormalAiSdk.core.litellm_executor import LiteLLMExecutor
 from FormalAiSdk.core.openai_executor import OpenAIExecutor
 from FormalAiSdk.sdk.session import ModelSession
 from FormalAiSdk.models.llm_models import LlmModels
-
-# Debug: sys.path[0] should be the FormalAiSdk parent directory
-print("DEBUG sys.path[0]:", sys.path[0])
 """
 AI Interpreter (Layer 1 Stub)
 -----------------------------
@@ -35,24 +26,8 @@ References:
 """
 
 from src.lang.runtime.base_interpreter import BaseInterpreter
-
-# Placeholder imports for SDK (update as needed)
-from src.client.python.FormalAiSdk.sdk.session import ModelSession
-from src.client.python.FormalAiSdk.sdk.fork import ModelFork
-# Expose SDK classes for test monkeypatching
-LiteLLMExecutor = None
-ModelFork = None
-try:
-    from FormalAiSdk.core.litellm_executor import LiteLLMExecutor as _LiteLLMExecutor
-    LiteLLMExecutor = _LiteLLMExecutor
-except ImportError:
-    pass
-try:
-    from FormalAiSdk.sdk.fork import ModelFork as _ModelFork
-    ModelFork = _ModelFork
-except ImportError:
-    pass
-from src.client.python.FormalAiSdk.sdk.types import Message
+from FormalAiSdk.sdk.fork import ModelFork
+from FormalAiSdk.sdk.types import Message
 
 class AIInterpreter(BaseInterpreter):
     """
@@ -89,15 +64,18 @@ class AIInterpreter(BaseInterpreter):
         Returns:
             list: List of message dicts from the session.
         """
-        import sys
-        print("DEBUG (run_llm) sys.path:", sys.path)
-        from FormalAiSdk.models.litellm_executor import LiteLLMExecutor
-
         if not hasattr(self, "context_content") or self.context_content is None:
             raise ValueError("No context content available for LLM execution.")
 
-        executor = LiteLLMExecutor(model_name, model_variant)
-        self.session = ModelSession("user", executor)
+        # Use the correct LlmModels static methods for config
+        if model_name == "openai":
+            model_config = LlmModels.FromOpenAi()
+        else:
+            # For ollama or any other provider, use From() with explicit config
+            model_config = LlmModels.From({"provider": model_name, "model": model_variant})
+
+        executor = LiteLLMExecutor(model_config)
+        self.session = ModelSession("user", model_config, executor)
         # Add context as the first message
         self.session.add_response("user", self.context_content)
         # Use provided prompt or context as the fork message
