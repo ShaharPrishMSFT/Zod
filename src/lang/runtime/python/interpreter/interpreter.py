@@ -53,14 +53,14 @@ class AIInterpreter(BaseInterpreter):
         # Inherits parse tree walking from BaseInterpreter
         pass
 
-    def run_llm(self, prompt=None, model_name="ollama", model_variant="llama2"):
+    def run_llm(self, prompt=None, model_name="ollama", model_variant="phi3:mini"):
         """
-        Executes an LLM call using the FormalAI SDK.
+        Executes an LLM call using the FormalAI SDK3
         Uses the current context as the initial message.
         Args:
             prompt (str, optional): The prompt to send to the LLM. If None, uses self.context_content.
             model_name (str): The backend to use (default: "ollama").
-            model_variant (str): The model to use (default: "llama2").
+            model_variant (str): The model to use (default: "phi3:mini").
         Returns:
             list: List of message dicts from the session.
         """
@@ -77,6 +77,7 @@ class AIInterpreter(BaseInterpreter):
         else:
             model_config = LlmModels.From({"provider": model_name, "model": model_variant})
 
+        # TODO: Bug - this will always use litellm
         executor = LiteLLMExecutor(model_config)
         self.session = ModelSession("user", model_config, executor)
         # Add context as the first message
@@ -86,14 +87,6 @@ class AIInterpreter(BaseInterpreter):
         fork = self.session.Fork("fork1", "user", fork_message)
         fork.Answer(self.session)
         return [ {"actor": msg.actor, "content": msg.content} for msg in self.session.messages ]
-
-    def run_llm_stub(self, *args, **kwargs):
-        """
-        Stub for LLM execution logic.
-        Raises:
-            NotImplementedError: Always, as this is a stub.
-        """
-        raise NotImplementedError("LLM execution is not implemented in Layer 1.")
 
     def process_context(self, ai_file_content: str):
         """Extracts the context identifier and content from a .ai file string using the Lark parser and the interpreter."""
@@ -136,12 +129,13 @@ class AIInterpreter(BaseInterpreter):
 
         # content is either a string (from natural_inline/natural_block) or a Tree
         from lark import Token
-        # Handle case where content is a list of tokens (block or inline)
-        if isinstance(content, list):
+        # If content is a Tree or has children, interpret it
+        if hasattr(content, 'children') or hasattr(content, 'data'):
+            result = self.transform(content)
+            # If the result is None, set to empty string
+            self.context_content = result if result is not None else ""
+        elif isinstance(content, list):
             text_tokens = [c.value for c in content if isinstance(c, Token) and c.type == "__ANON_1"]
-            self.context_content = "\n".join(text_tokens)
-        elif hasattr(content, 'children'):
-            text_tokens = [c.value for c in content.children if isinstance(c, Token) and c.type == "__ANON_1"]
             self.context_content = "\n".join(text_tokens)
         else:
             if isinstance(content, Token):
@@ -149,6 +143,53 @@ class AIInterpreter(BaseInterpreter):
             else:
                 self.context_content = str(content)
 
+
+    def if_statement(self, children):
+        """
+        Lark transformer method for if_statement.
+        Uses LLM to evaluate the condition and executes the block if LLM returns "yes".
+        Raises error if LLM does not return "yes" or "no".
+        """
+        # children: [condition, block]
+        condition = children[0]
+        block = children[1]
+        instruction = (
+            "IMPORTANT: Answer with exactly one word, either 'yes' or 'no', and nothing else. "
+            "Your answer must reflect the truth of the following statement to the best of your knowledge."
+        )
+        prompt = f"{instruction}\n\n{str(condition)}"
+        llm_result = self.run_llm(prompt=prompt)
+        answer = llm_result[-1]["content"].strip().lower() if llm_result else ""
+        if answer == "yes":
+            return self.transform(block)
+        elif answer == "no":
+            return None
+        else:
+            raise ValueError(f"LLM response must be 'yes' or 'no', got: '{answer}'")
+
+    def if_else_statement(self, children):
+        """
+        Lark transformer method for if_else_statement.
+        Uses LLM to evaluate the condition and executes the correct block.
+        Raises error if LLM does not return "yes" or "no".
+        """
+        # children: [condition, if_block, else_clause]
+        condition = children[0]
+        if_block = children[1]
+        else_clause = children[2]
+        instruction = (
+            "IMPORTANT: Answer with exactly one word, either 'yes' or 'no', and nothing else. "
+            "Your answer must reflect the truth of the following statement to the best of your knowledge."
+        )
+        prompt = f"{instruction}\n\n{str(condition)}"
+        llm_result = self.run_llm(prompt=prompt)
+        answer = llm_result[-1]["content"].strip().lower() if llm_result else ""
+        if answer == "yes":
+            return self.transform(if_block)
+        elif answer == "no":
+            return self.transform(else_clause)
+        else:
+            raise ValueError(f"LLM response must be 'yes' or 'no', got: '{answer}'")
 
     @classmethod
     def from_code(cls, code: str):
@@ -169,17 +210,3 @@ class AIInterpreter(BaseInterpreter):
         inst = cls(file_path)
         inst.process_context(code)
         return inst
-
-    def process_context_stub(self, *args, **kwargs):
-        """
-        Deprecated: Use process_context instead.
-        """
-        raise NotImplementedError("Use process_context for context extraction.")
-
-    def output_results_stub(self, *args, **kwargs):
-        """
-        Stub for output handling logic.
-        Raises:
-            NotImplementedError: Always, as this is a stub.
-        """
-        raise NotImplementedError("Output handling is not implemented in Layer 1.")
