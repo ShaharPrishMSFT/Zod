@@ -87,14 +87,6 @@ class AIInterpreter(BaseInterpreter):
         fork.Answer(self.session)
         return [ {"actor": msg.actor, "content": msg.content} for msg in self.session.messages ]
 
-    def run_llm_stub(self, *args, **kwargs):
-        """
-        Stub for LLM execution logic.
-        Raises:
-            NotImplementedError: Always, as this is a stub.
-        """
-        raise NotImplementedError("LLM execution is not implemented in Layer 1.")
-
     def process_context(self, ai_file_content: str):
         """Extracts the context identifier and content from a .ai file string using the Lark parser and the interpreter."""
         from lark import Lark
@@ -169,17 +161,3 @@ class AIInterpreter(BaseInterpreter):
         inst = cls(file_path)
         inst.process_context(code)
         return inst
-
-    def process_context_stub(self, *args, **kwargs):
-        """
-        Deprecated: Use process_context instead.
-        """
-        raise NotImplementedError("Use process_context for context extraction.")
-
-    def output_results_stub(self, *args, **kwargs):
-        """
-        Stub for output handling logic.
-        Raises:
-            NotImplementedError: Always, as this is a stub.
-        """
-        raise NotImplementedError("Output handling is not implemented in Layer 1.")
