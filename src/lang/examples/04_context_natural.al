@@ -1,27 +1,8 @@
-# Shopping cart validation using natural block body
-context
-{
-    action
+# Shopping cart validation
 
-    
-    --begin
-    Cart validation process:
-    {{
-        if
-        {
-            --begin
-            Checking cart state:
-            {{ action [Cart status checked] }}
-            --end
-        }
-        then
-        {
-            action [Cart is valid]
-        }
-        else
-        {
-            action [Cart requires attention]
-        }
-    }}
-    --end
-}
+context
+--begin
+Cart validation process.
+If the cart state is valid, indicate that the cart is valid.
+Else, indicate that the cart requires attention.
+--end

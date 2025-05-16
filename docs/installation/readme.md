@@ -7,6 +7,36 @@ This directory contains installation guides for various components of the projec
 - [AutoGen (AutoFac)](./autogen.md) - Installation guide for AutoGen with Ollama support
 - [Ollama](./ollama.md) - Installation and configuration guide for Ollama LLM runtime
 
+## FormalAiSdk Local Package Installation
+
+To use the FormalAiSdk as a robust, reusable Python package in your environment:
+
+1. **Navigate to the SDK root:**
+   ```
+   cd src/client/python
+   ```
+
+2. **Install the SDK in editable mode:**
+   ```
+   pip install -e .
+   ```
+
+   This makes the `FormalAiSdk` package importable from anywhere in your environment.
+
+3. **Usage Example:**
+   ```python
+   from FormalAiSdk.models.llm_models import LlmModels
+   ```
+
+4. **Troubleshooting:**
+   - If you get `ModuleNotFoundError`, ensure you ran the install command from the correct directory and are using the right Python environment.
+   - If you restructure the SDK, re-run the install command.
+
+5. **Uninstall:**
+   ```
+   pip uninstall FormalAiSdk
+   ```
+
 ## Quick Start
 
 1. Install Ollama first using the [Ollama installation guide](./ollama.md)
