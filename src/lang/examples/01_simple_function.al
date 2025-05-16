@@ -1,6 +1,6 @@
-# Functions must have an ID
+# Greet the user by their name
 
-function uigreetingwelcome
-{
-    input [userName]
-}
+context
+--begin
+Welcome, user! Please tell me your name.
+--end
