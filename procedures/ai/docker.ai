@@ -1,0 +1,78 @@
+# Docker helper script (partial)
+
+context  
+--begin  
+This is partial Docker knowledge; do not rely on it for completeness.  
+Prefer using explicitly tagged images (e.g., `nginx:1.25-alpine`) rather than `latest`.  
+Clean up unused containers, images, networks, and volumes with `docker system prune` or targeted `docker image prune`, etc., to save disk space.  
+Use `docker-compose` or `docker compose` (v2 syntax) for multi-container setups to simplify orchestration and networking.  
+MINE: Avoid running containers as root; use the `--user` flag or configure the Dockerfile with `USER`.  
+MINE: Never store secrets or credentials in images. Use environment variables, secrets management systems, or bind mounts.  
+FOR AI HELPER:  
+- Expand with specific best practices and examples:  
+  - Use `--rm` with `docker run` to avoid leaving stopped containers.  
+  - Tag images on build: `docker build -t <image>:<tag> .`  
+  - Mount local volumes when needed: `-v <host_path>:<container_path>`  
+  - Expose and map ports clearly: `-p <host_port>:<container_port>`  
+  - Name containers explicitly: `--name <container-name>`  
+  - Use `--env` or `--env-file` for configuration.  
+- Suggest `docker exec -it <container> sh` or `bash` for interactive access.  
+- Warn against using root inside containers unless strictly required.  
+- Recommend using `.dockerignore` to speed up builds and reduce image size.  
+- Encourage multi-stage builds for leaner images.  
+- Recommend `docker logs <container>` for diagnostics.  
+
+If required values are missing from the request (such as image name or port mappings), ask for the missing input as soon as it is identified. Prompt one input at a time and proceed only after each is resolved.  
+--end  
+
+if [the user is using PowerShell]  
+{  
+  context [Use syntax compatible with PowerShell, including escaping backticks (\`) and enclosing paths in quotes as needed.]  
+}  
+
+if [the request is about running a container and doesn’t include --rm]  
+{  
+  context [Recommend adding --rm to automatically remove the container after it exits.]  
+}  
+
+if [the request is about building and doesn’t specify --tag or -t]  
+{  
+  context [Suggest tagging the image with `-t <image>:<tag>` for clarity and versioning.]  
+}  
+
+# Prompt for required inputs one by one since we don’t yet have the statements to do this in one go  
+if [the request involves pulling or running an image and no image name is available in context]  
+{  
+  input [Which image (and optional tag) should I use? For example: `nginx:1.25-alpine`]  
+  if [the image name is still missing]  
+  {  
+    return [I can’t generate a Docker command without an image name.]  
+  }  
+}  
+
+if [the request involves mapping ports and no host port is available in context]  
+{  
+  input [Which host port should I map to? For example: 8080]  
+  if [the host port is still missing]  
+  {  
+    return [I can’t generate a `docker run -p` command without a host port.]  
+  }  
+}  
+
+context  
+--begin  
+Respond with the single Docker command that satisfies the request. Use angle-bracket placeholders (e.g., `<image>`, `<tag>`, `<container-name>`, `<port>`) when necessary. Output only the command.  
+--end  
+
+if [context still contains unresolved questions or incomplete values]  
+{
+  input [Some required information is still missing. Please provide answers to the outstanding questions before I can generate a complete Docker command.]  
+}
+
+if [context still contains unresolved questions or incomplete values]  
+{
+  return  [Some required information is still missing. Please provide answers to the outstanding questions before I can generate a complete Docker command.]  
+}
+
+return [What Docker command satisfies the user request? Use angle-bracket placeholders if the user hasn’t provided specific values. Respond only with the command.]
+

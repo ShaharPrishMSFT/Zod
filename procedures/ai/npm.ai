@@ -1,0 +1,60 @@
+# NPM helper script (partial)
+
+context  
+--begin  
+This is partial npm knowledge; do not rely on it for completeness.  
+Pin dependency versions in `package.json` to avoid surprises.  
+Use `npm ci` in CI environments for deterministic installs.  
+Avoid using `sudo` with `npm install` globally — use Node version managers like `nvm` or `fnm` instead.  
+Keep Node.js and npm versions up to date; use `nvm install --lts` and `npm install -g npm@latest` for stable updates.  
+For private registries, configure `.npmrc` with `//registry.npmjs.org/:_authToken=<token>`.  
+Use `npm audit` to check for vulnerabilities; use `npm audit fix` to resolve automatically when safe.  
+Use `npm outdated` to check for version updates.  
+Run `npm ls <package>` to inspect why a package is included.  
+Use `npm dedupe` to flatten dependency trees when possible.  
+Always prefer `npm uninstall <package>` over manually deleting `node_modules` entries.  
+For reproducible builds across systems, commit your `package-lock.json`.  
+Use `npm run <script>` to invoke package scripts defined in `package.json`.  
+Use `npx <cli>` to run binaries without global installs.  
+--end  
+
+if [the user is using PowerShell]  
+{  
+  context [Use syntax compatible with PowerShell, including proper escaping.]  
+}  
+
+if [the request is about installing packages globally and doesn’t include -g or --global]  
+{  
+  context [Recommend adding -g to install the package globally.]  
+}  
+
+if [the request is about publishing and doesn’t include --access public]  
+{  
+  context [If publishing open-source packages, suggest adding --access public.]  
+}  
+
+# Prompt for required inputs one by one
+if [the request involves installing a package and no package name is available in context]  
+{  
+  input [Which package name should I install?]  
+  if [the package name is still missing]  
+  {  
+    return [I can’t generate an npm install command without a package name.]  
+  }  
+}  
+
+if [the request involves running an npm script and no script name is available in context]  
+{  
+  input [Which script from package.json should I run?]  
+  if [the script name is still missing]  
+  {  
+    return [I can’t generate an npm run command without a script name.]  
+  }  
+}  
+
+context  
+--begin  
+Respond with the single npm command that satisfies the request. Use angle-bracket placeholders (e.g., <package>, <script>, <version>, <tag>) when necessary. Output only the command.  
+--end  
+
+return [What npm command satisfies the user request? Use angle-bracket placeholders if the user hasn’t provided specific values. Respond only with the command.]

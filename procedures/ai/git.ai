@@ -1,0 +1,72 @@
+# Git helper script (partial)
+
+context
+--begin
+This is partial Git knowledge; do not rely on it for completeness.
+Avoid committing directly to main.
+Use clear, concise commit messages.
+Pull before pushing to reduce conflicts.
+Use branches for features and fixes.
+MINE: Avoid `git push --force` on shared branches.
+MINE: Never commit large binaries.
+Use descriptive branch names (e.g., feature/add-login, fix/typo-readme).
+Use `git status` to check the current state before committing.
+Use `git log --oneline --graph` to visualize commit history.
+Use `git stash` to save changes temporarily before switching branches.
+Use `git rebase -i` for clean, linear history in local feature branches.
+MINE: Regularly prune old branches with `git branch -d` or `-D` after merging.
+MINE: Use `.gitignore` to prevent committing unnecessary files.
+MINE: Review changes before committing with `git diff`.
+MINE: Use `git fetch` to see changes without merging.
+MINE: Rebase instead of merging for small, local updates to reduce noise.
+MINE: Use `git tag` to mark release points.
+
+# Script-Relevant Git Guidance
+Prefer `-m` to include a commit message inline.
+Use `--no-ff` with merges to preserve history clarity.
+Offer context-aware suggestions based on detected intent (e.g., committing, merging, cloning).
+Provide placeholder-based command responses where inputs are missing.
+Tailor command syntax depending on shell environment (e.g., PowerShell vs. bash).
+Highlight common pitfalls in command usage (e.g., forcing pushes).
+--end
+
+if [the user is using PowerShell]
+{
+  context [Use syntax compatible with PowerShell, including proper escaping.]
+}
+
+if [the request is about merging and doesn't mention --no-ff]
+{
+  context [Recommend using --no-ff to preserve commit history.]
+}
+
+if [the request is about committing but doesn't include -m]
+{
+  context [Suggest adding a short commit message with -m.]
+}
+
+# Validate presence of required input
+if [the request involves cloning and no repository URL is available in context]
+{
+  input [Which repository URL should I use?]
+  if [the repository URL is still missing]
+  {
+    return [I can’t generate a git clone command without a repository URL.]
+  }
+}
+
+if [the request involves checking out or creating a branch and no branch name is available in context]
+{
+  input [Which branch name should I use?]
+  if [the branch name is still missing]
+  {
+    return [I can’t generate a git branch or checkout command without a branch name.]
+  }
+}
+
+context
+--begin
+Respond with the single Git command that satisfies the request. Use angle‑bracket placeholders (e.g., <repo-url>, <branch>, <message>) when necessary. Output only the command.
+--end
+
+return [What Git command satisfies the user request? Use angle‑bracket placeholders if the user hasn’t provided specific values. Respond only with the command.]
