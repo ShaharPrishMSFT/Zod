@@ -1,12 +1,12 @@
-"""
+r"""
 NOTE: For all tests that require importing the FormalAiSdk package, you must set
 the PYTHONPATH environment variable to include the absolute path to 'src/client/python'
 before running pytest.
 
 Recommended for Windows (cmd):
 
-    set PYTHONPATH=C:\src\zod\worktrees\formalai.lang\src\client\python
-    pytest src\lang\runtime\python\tests\test_interpreter.py
+    set PYTHONPATH=C:\\src\\zod\\worktrees\\formalai.lang\\src\\client\\python
+    pytest src\\lang\\runtime\\python\\tests\\test_interpreter.py
 
 For Windows PowerShell:
 
