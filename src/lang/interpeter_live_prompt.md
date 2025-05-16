@@ -49,9 +49,6 @@ This interpreter should be built in seven steps, each corresponding to a develop
 - **Step 2:** Implement context processing.
 - **Step 3:** Integrate LLM calls.
 - **Step 4:** Connect context and LLM calls. At this point, context tests should pass.
-- **Step 5:** Implement all other statement types (besides input) in the interpreter.
-- **Step 6:** Implement a contract/interface for runtimes, so the interpreter can support multiple runtime types.
-- **Step 7:** Implement a terminal runtime (for console execution).
 
 ---
 
