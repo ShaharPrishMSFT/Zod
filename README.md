@@ -11,13 +11,13 @@ When working in this repository, the agent's personality and behavior are determ
 
 ## Worktree Structure
 This repository uses multiple worktrees for different components:
-- `worktrees/formalai.python/` - Python SDK implementation
-- `worktrees/formalai.python.infra/` - Infrastructure code
-- `worktrees/formalai.configuration/` - Configuration management
-- `worktrees/formalai.lang/` - Formal AI language implementation
-- `worktrees/zod.it/` - IT automation and tooling
-- `worktrees/formalai.generalist/` - General use cases and procedures
-- `worktrees/formalai.playground/` - Experimental features and prototypes
+- `worktrees/formalai.python.2/` - Python SDK implementation
+- `worktrees/formalai.python.infra.2/` - Infrastructure code
+- `worktrees/formalai.configuration.2/` - Configuration management
+- `worktrees/formalai.lang.2/` - Formal AI language implementation
+- `worktrees/zod.it.2/` - IT automation and tooling
+- `worktrees/formalai.generalist.2/` - General use cases and procedures
+- `worktrees/formalai.playground.2/` - Experimental features and prototypes
 
 Each worktree has its corresponding personality folder in the ./personalities directory:
 - `./personalities/formalai.python/` - Personality for Python SDK development
@@ -139,13 +139,13 @@ All new branches must follow the naming convention:
 - Active development happens on the `zod.orchestrator` branch
 - The `main` branch serves as the integration target for all changes
 - Each worktree operates on its own feature branch:
-  - `formalai.configuration`
-  - `formalai.playground`
-  - `formalai.generalist`
-  - `formalai.python`
-  - `formalai.python.infra`
-  - `formalai.lang`
-  - `zod.it`
+  - `formalai.configuration.2`
+  - `formalai.playground.2`
+  - `formalai.generalist.2`
+  - `formalai.python.2`
+  - `formalai.python.infra.2`
+  - `formalai.lang.2`
+  - `zod.it.2`
 
 ### Merge Workflow
 - While on `main`, run `git branch --no-merged main` to list worktree branches that still need to be merged.

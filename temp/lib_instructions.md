@@ -1,4 +1,4 @@
-# FormalAiSdk: Local Python Package Usage
+# How to Make FormalAiSdk a Local Python Package
 
 ## Context
 
@@ -8,43 +8,11 @@ The FormalAiSdk is a core component used by other parts of the FormalAI project.
 from FormalAiSdk.models.llm_models import LlmModels
 ```
 
-FormalAiSdk is designed to be used as a robust, reusable Python package across the FormalAI project.
-
----
-
-## Local Installation
-
-### 1. Navigate to the SDK root
-
-```sh
-cd src/client/python
-```
-
-### 2. Install the SDK in editable mode
-
-```sh
-pip install -e .
-```
-
-This makes the `FormalAiSdk` package importable from anywhere in your environment.
-
----
-
-## Usage Example
-
-```python
-from FormalAiSdk.models.llm_models import LlmModels
-```
-
----
-
 ## Why Package the SDK?
 
 - Avoids fragile sys.path or PYTHONPATH hacks.
 - Ensures consistent imports in scripts, tests, and notebooks.
 - Makes the SDK feel like a standard, reusable component.
-
----
 
 ## How to Set Up for Local Development
 
@@ -77,7 +45,7 @@ setup(
 
 From the `src/client/python/FormalAiSdk/` directory, run:
 
-```sh
+```
 pip install -e .
 ```
 
@@ -93,24 +61,11 @@ from FormalAiSdk.models.llm_models import LlmModels
 
 No need to set PYTHONPATH or modify sys.path.
 
----
-
 ## Troubleshooting
 
 - If you get `ModuleNotFoundError`, make sure you ran `pip install -e .` in the correct directory.
 - If using a virtual environment, activate it before installing.
 - If you restructure the SDK, re-run the install command.
-- If you get `ModuleNotFoundError`, ensure you ran the install command from the correct directory and are using the right Python environment.
-
----
-
-## Uninstall
-
-```sh
-pip uninstall FormalAiSdk
-```
-
----
 
 ## Notes
 
